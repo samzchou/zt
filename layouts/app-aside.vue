@@ -1,17 +1,15 @@
 <template>
 	<section class="aside-container">
 		<div class="title">
-			<!--<div class="logo" />-->
+			<div class="logo" />
 		</div>
 		<div class="content">
-			<!--
 			<ul>
 				<li v-for="item in menuList" :key="item.name" :class="{'active':item.name==activeName}">
 					<i :class="item.icon" />
 					<span>{{item.label}}</span>
 				</li>
 			</ul>
-			-->
 		</div>
 	</section>
 </template>
