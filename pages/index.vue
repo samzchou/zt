@@ -24,6 +24,7 @@
 						@click="setType(1)"></el-button>
 					<el-button size="mini" icon="el-icon-date" :type="viewType==1?'primary':''" title="列表模式"
 						@click="setType(0)"></el-button>
+                    <el-button size="mini" icon="el-icon-box" title="数据统计" @click="$router.push('/statistical')"></el-button>
 				</el-button-group>
 			</div>
 		</div>
@@ -257,7 +258,7 @@ export default {
 				collectionName: "timeBlock",
 				data: {
                     date:this.calcData(this.weekDay).getTime(),
-                    uid:this.$store.state.user.id
+                    userId:this.$store.state.user.id
                 }
 			}
 			let result = await this.$axios.$post('mock/db', { data: condition });
