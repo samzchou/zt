@@ -256,7 +256,8 @@ export default {
 				type: "getData",
 				collectionName: "timeBlock",
 				data: {
-                    date:this.calcData(this.weekDay).getTime()
+                    date:this.calcData(this.weekDay).getTime(),
+                    uid:this.$store.state.user.id
                 }
 			}
 			let result = await this.$axios.$post('mock/db', { data: condition });
