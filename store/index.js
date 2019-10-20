@@ -7,12 +7,14 @@ export const state = () => ({
         opened: process.server ? true : !+VueCookies.get('sidebarStatus'),
         withoutAnimation: false
     },
-	workType:[{label:"工作分类一",id:1},{label:"工作分类二",id:2}],
-	workProject:[{label:"项目一",id:1},{label:"项目二",id:2}],
-	timeutilHeight:20,
-	locakMinutes:15,
-	editBlock:null,
-	editIndex:'',
+    weekArray: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
+    workType: [{ label: "工作分类一", id: 1 }, { label: "工作分类二", id: 2 }],
+    workProject: [{ label: "项目一", id: 1 }, { label: "项目二", id: 2 }],
+    timeutilHeight: 20,
+    locakMinutes: 15,
+    isEditTime:false,
+    editBlock: null,
+    editIndex: '',
 })
 
 export const mutations = {
@@ -22,16 +24,21 @@ export const mutations = {
             this.app.$storage.set('user', state.user);
         }
     },
-	UPDATE_EDITBLOCK(state, obj) {
+    UPDATE_EDITBLOCK(state, obj) {
         state.editBlock = obj;
-		//console.log('state.editBlock', state.editBlock);
+        //console.log('state.editBlock', state.editBlock);
     },
-	UPDATE_EDITINDEX(state, indexStr) {
+    UPDATE_EDITINDEX(state, indexStr) {
         state.editIndex = indexStr;
-		//console.log('state.editIndex', state.editIndex);
+        state.isEditTime = true;
+        //console.log('state.editIndex', state.editIndex);
+    },
+    UPDATE_EDITINGTIME(state, flag) {
+        state.isEditTime = flag;
+        //console.log('state.editIndex', state.editIndex);
     },
     TOGGLE_SIDEBAR: state => {
-        VueCookies.set('sidebarStatus', state.sidebar.opened?1:0);
+        VueCookies.set('sidebarStatus', state.sidebar.opened ? 1 : 0);
         state.sidebar.opened = !state.sidebar.opened;
         state.sidebar.withoutAnimation = false;
     },

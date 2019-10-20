@@ -1,5 +1,21 @@
 /* eslint-disable */
 export default {
+    // 获取本周第一天日期
+    calcData(date = newDate()) {
+        let weekday = date.getDay() || 7; //获取星期几,getDay()返回值是 0（周日） 到 6（周六） 之间的一个整数。0||7为7，即weekday的值为1-7
+        date.setDate(date.getDate() - weekday + 1);
+        date.setHours(0, 0, 0, 0);
+        return date;
+    },
+    // 分钟转小时分
+    ChangeHourMinutestr(str) {
+        if (str !== "0" && str !== "" && str !== null) {
+            return ((Math.floor(str / 60)).toString().length < 2 ? "0" + (Math.floor(str / 60)).toString() :
+                (Math.floor(str / 60)).toString()) + ":" + ((str % 60).toString().length < 2 ? "0" + (str % 60).toString() : (str % 60).toString());
+        } else {
+            return "";
+        }
+    },
     // 分钟转换为
     exChange(mss, ext) {
         let hours = parseInt((mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -9,6 +25,7 @@ export default {
         }
         return hours + "小时 " + minutes + "分钟";
     },
+    // 小时分转分钟
     changeMyTimeToMin(str) {
         let hours = str.split(':')[0];
         let min = str.split(':')[1];
@@ -117,7 +134,8 @@ export default {
     //获取对应Key的值
     getValueByKey(arr, valueKey, value, key) {
         if (!arr || arr.length < 1) return ''
-        var i = 0, len = arr.length;
+        var i = 0,
+            len = arr.length;
         for (; i < len; i++) {
             if (arr[i][valueKey] === value) {
                 return arr[i][key];

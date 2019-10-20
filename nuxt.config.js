@@ -3,8 +3,8 @@ const sysConfig = require('./config');
 module.exports = {
     mode: 'universal',
     /*
-    ** Headers of the page
-    */
+     ** Headers of the page
+     */
     head: {
         title: process.env.npm_package_name || '',
         meta: [
@@ -19,12 +19,12 @@ module.exports = {
         ]
     },
     /*
-    ** Customize the progress-bar color
-    */
+     ** Customize the progress-bar color
+     */
     loading: { color: '#fff' },
     /*
-    ** Global CSS
-    */
+     ** Global CSS
+     */
     router: {
         middleware: ['auth']
     },
@@ -35,20 +35,21 @@ module.exports = {
     // 组件缓存
     cache: true,
     /*
-    ** Plugins to load before mounting the App
-    */
+     ** Plugins to load before mounting the App
+     */
     plugins: [
         '@/plugins/element-ui',
         '@/plugins/axios',
         '@/plugins/lodash',
         '@/plugins/global',
         '@/plugins/moment',
+        { src: '~/plugins/echarts', ssr: false },
         { src: '@/plugins/cookies', ssr: false },
         { src: '@/plugins/storage', ssr: false }
     ],
     /*
-    ** Nuxt.js dev-modules
-    */
+     ** Nuxt.js dev-modules
+     */
     /*
     buildModules: [
       // Doc: https://github.com/nuxt-community/eslint-module
@@ -56,8 +57,8 @@ module.exports = {
     ],
     */
     /*
-    ** Nuxt.js modules
-    */
+     ** Nuxt.js modules
+     */
     modules: [
         '@nuxtjs/style-resources',
         '@nuxtjs/axios'
@@ -66,21 +67,21 @@ module.exports = {
         scss: '~assets/scss/var.scss'
     },
     /*
-    ** Axios module configuration
-    ** See https://axios.nuxtjs.org/options
-    */
+     ** Axios module configuration
+     ** See https://axios.nuxtjs.org/options
+     */
     axios: {
         baseURL: sysConfig.hrssc_env.SERVER_URL,
         browserBaseURL: sysConfig.hrssc_env.SERVER_URL
     },
     /*
-    ** Build configuration
-    */
+     ** Build configuration
+     */
     build: {
         transpile: [/^element-ui/],
         /*
-        ** You can extend webpack config here
-        */
+         ** You can extend webpack config here
+         */
         extend(config, { isDev, loaders: { vue } }) {
             vue.i18n = '@kazupon/vue-i18n-loader';
             if (isDev && process.client) {

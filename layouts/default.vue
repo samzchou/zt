@@ -1,40 +1,40 @@
 <template>
-	<el-container class="app-layout">
-		<el-aside width="250px" :class="{'collapse':!sidebar.opened}">
-			<app-aside />
-		</el-aside>
-		<el-container>
-			<el-header height="40">
-				<app-header class="app-header" />
-			</el-header>
-			<el-main>
-				<div class="main-content">
-					<transition name="page-enter">
-						<nuxt class="page-content page-enter-active" />
-					</transition>
-				</div>
-			</el-main>
-		</el-container>
-	</el-container>
+    <el-container class="app-layout">
+        <el-aside width="250px" :class="{'collapse':!sidebar.opened}">
+            <app-aside />
+        </el-aside>
+        <el-container>
+            <el-header height="40">
+                <app-header class="app-header" />
+            </el-header>
+            <el-main>
+                <div class="main-content">
+                    <transition name="page-enter">
+                        <nuxt class="page-content page-enter-active" />
+                    </transition>
+                </div>
+            </el-main>
+        </el-container>
+    </el-container>
 </template>
 
 <!-- pages/*.vue -->
 <script>
 import {
-	mapState
+    mapState
 } from 'vuex';
 import appHeader from './app-header';
 import appAside from './app-aside';
 export default {
-	components: {
-		appHeader, appAside
-	},
-	computed: {
-		...mapState(['sidebar']),
-	},
-	data: () => ({
-		breadcrumb: [],
-	})
+    components: {
+        appHeader, appAside
+    },
+    computed: {
+        ...mapState(['sidebar']),
+    },
+    data: () => ({
+        breadcrumb: [],
+    })
 }
 </script>
 
@@ -64,11 +64,12 @@ export default {
 	}
 	.el-main {
 		padding: 0;
-        overflow: hidden;
+		overflow: hidden;
 
-        .main-content{
-            height: 100%;
-        }
+		.main-content {
+			height: 100%;
+			background-color: #eee;
+		}
 		/* .scrollbar{
             height: 100%;
             /deep/ .el-scrollbar__wrap {

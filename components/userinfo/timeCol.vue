@@ -1,226 +1,222 @@
 <template>
-	<section class="grid-container">
-		<div class="cols">
-			<div v-for="k in 96" :key="k" :class="{'bh':(k-1)%4==0}">
-				<div class="show-time">
-					<span @click="createBlock(k-1, $event)">
-						{{getMyTime(k-1)}} <i class="el-icon-plus" title="编辑工作时间" />
-					</span>
-				</div>
-			</div>
-		</div>
-		<div class="time-block" v-for="(block,idx) in blockList" :key="idx" :class="{'active':activeIndex==idx}"
-			v-clickoutside="handleClickOutside" @click="editMyBlock(idx)" :style="{'top':block.rect.top+'px','height':block.rect.height+'px'}">
-			<div class="title">
-				<span>上班</span>
-				<span class="all-times">all times:{{block.allTimes}}</span>
-				<i class="el-icon-close" @click="remove(idx)" />
-			</div>
-			<div class="desc">
-				<div>工作分类：{{getWorkStr('workType', block.type)}}</div>
-				<div>项目：{{getWorkStr('workProject', block.project)}}</div>
+    <section class="grid-container">
+        <div class="cols">
+            <div v-for="k in 96" :key="k" :class="{'bh':(k-1)%4==0}">
+                <div class="show-time">
+                    <span @click="createBlock(k-1, $event)">
+                        {{getMyTime(k-1)}}
+                        <i class="el-icon-plus" title="编辑工作时间" />
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="time-block" v-for="(block,idx) in blockList" :key="idx" :class="{'active':activeIndex==idx}" v-clickoutside="handleClickOutside"
+            @click="editMyBlock(idx)" :style="{'top':block.rect.top+'px','height':block.rect.height+'px'}">
+            <div class="title">
+                <span>上班</span>
+                <span class="all-times">all times:{{block.allTimes}}</span>
+                <i class="el-icon-close" @click="remove(idx)" />
+            </div>
+            <div class="desc">
+                <div>工作分类：{{getWorkStr('workType', block.type)}}</div>
+                <div>项目：{{getWorkStr('workProject', block.project)}}</div>
                 <div>备注描述：<br/>{{ block.desc}}</div>
-			</div>
-			<div class="resize" @mousedown="handlerMouserDown(idx, $event)" />
-		</div>
-	</section>
+                <div>完成情况：已完成</div>
+            </div>
+            <div class="resize" @mousedown="handlerMouserDown(idx, $event)" />
+        </div>
+    </section>
 </template>
 
 <script>
 import Clickoutside from 'element-ui/src/utils/clickoutside';
 import {
-	mapState,
-	mapMutations
+    mapState,
+    mapMutations
 } from 'vuex'
 import timeBlock from './timeBlock';
 export default {
-	directives: { Clickoutside },
-	props: {
+    directives: { Clickoutside },
+    props: {
         colIndex: Number,
-        dataList:Array
-	},
-	components: {
-		timeBlock
-	},
-	computed: {
-		...mapState(['workType', 'workProject', 'timeutilHeight', 'locakMinutes', 'editIndex', 'editBlock']),
-		/* setPositions() {
-			if (this.currBlock && !_.isEmpty(this.currBlock)) {
-				return {
-					"top": this.currBlock.rect.top + 'px',
-					"height": this.currBlock.rect.height + 'px'
-				};
-			}
-			return "";
-		}, */
-	},
-	watch: {
-		editBlock: {
-			handler(obj) {
-				if (obj && !_.isEmpty(obj) && this.blockList.length) {
-					if (obj.colIndex == this.colIndex) {
-						this.activeIndex = _.findIndex(this.blockList, { 'index': obj.index });
-						this.currBlock = this.blockList[this.activeIndex];
-						// 如果数据有所改变则更新
-						if (!_.isEmpty(this.$global.difference(obj, this.currBlock))) {
-							this.currBlock = _.cloneDeep(obj);
-							let conditions = this.updatePosition(this.currBlock);
-							this.currBlock = _.merge(this.currBlock, conditions);
-							this.$set(this.blockList, this.activeIndex, this.currBlock);
-							console.log('watch timeCol editBlock', this.currBlock);
-						}
-					}
-				}
-			},
-			immediate: true
+        dataList: Array
+    },
+    components: {
+        timeBlock
+    },
+    computed: {
+        ...mapState(['workType', 'workProject', 'timeutilHeight', 'locakMinutes', 'editIndex', 'editBlock']),
+    },
+    watch: {
+        editBlock: {
+            handler(obj) {
+                if (obj && !_.isEmpty(obj) && this.blockList.length) {
+                    if (obj.colIndex == this.colIndex) {
+                        this.activeIndex = _.findIndex(this.blockList, { 'index': obj.index });
+                        this.currBlock = this.blockList[this.activeIndex];
+                        // 如果数据有所改变则更新
+                        if (!_.isEmpty(this.$global.difference(obj, this.currBlock))) {
+                            this.currBlock = _.cloneDeep(obj);
+                            let conditions = this.updatePosition(this.currBlock);
+                            this.currBlock = _.merge(this.currBlock, conditions);
+                            this.$set(this.blockList, this.activeIndex, this.currBlock);
+                            //console.log('watch timeCol editBlock', this.currBlock);
+                        }
+                    }
+                }
+            },
+            immediate: true
         },
-        dataList:{
+        dataList: {
             handler(data) {
-                if(data && !_.isEmpty(data)){
-                    this.blockList = _.cloneDeep(data);
-                }else{
-                    this.blockList = [];
+                //this.blockList = [...data]; //_.cloneDeep(data);
+                if (data && data.length) {
+                    this.blockList = data.map(item => {
+                        return item;
+                    });
                 }
             },
             immediate: true
         }
-	},
-	data: () => ({
-		blockList: [],
-		currBlock: {},
-		activeIndex: -1,
-		dragging: false,
-	}),
-	methods: {
-		...mapMutations(['UPDATE_EDITINDEX', 'UPDATE_EDITBLOCK']),
-		getWorkStr(ca, val) {
-			//debugger
-			if (val) {
-				let cat = _.find(this[ca], { "id": val });
-				return cat.label;
-			}
-			return "";
-		},
-		remove(index) {
-			this.$confirm('确定移除该工作时间?', '提示', {
-				confirmButtonText: '确定',
-				cancelButtonText: '取消',
-				type: 'warning'
-			}).then(() => {
+    },
+    data: () => ({
+        blockList: [],
+        currBlock: {},
+        activeIndex: -1,
+        dragging: false,
+    }),
+    methods: {
+        ...mapMutations(['UPDATE_EDITINDEX', 'UPDATE_EDITBLOCK', 'UPDATE_EDITINGTIME']),
+        getWorkStr(ca, val) {
+            //debugger
+            if (val) {
+                let cat = _.find(this[ca], { "id": val });
+                return cat.label;
+            }
+            return "";
+        },
+        remove(index) {
+            this.$confirm('确定移除该工作时间?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
                 this.blockList.splice(index, 1);
                 this.UPDATE_EDITBLOCK(null);
-			}).catch(() => {});
-		},
-		updatePosition(obj) {
-			let startMin = this.$global.changeMyTimeToMin(obj.startTime); //obj.startTime.split(':')[0];
-			let endMin = this.$global.changeMyTimeToMin(obj.endTime);
-			let height = (endMin - startMin);
-			return {
-				"rowIndex": startMin / this.locakMinutes,
-				"allTimes": this.getMyTime(height, true),
-				"rect": {
-					"height": (height / this.locakMinutes) * this.timeutilHeight,
-					"top": (startMin / this.locakMinutes) * this.timeutilHeight
-				}
-			}
+            }).catch(() => { });
+        },
+        updatePosition(obj) {
+            let startMin = this.$global.changeMyTimeToMin(obj.startTime); //obj.startTime.split(':')[0];
+            let endMin = this.$global.changeMyTimeToMin(obj.endTime);
+            let height = (endMin - startMin);
+            return {
+                "rowIndex": startMin / this.locakMinutes,
+                "allTimes": this.getMyTime(height, true),
+                "rect": {
+                    "height": (height / this.locakMinutes) * this.timeutilHeight,
+                    "top": (startMin / this.locakMinutes) * this.timeutilHeight
+                }
+            }
 
-			console.log(startMin, endMin);
-		},
-		handleClickOutside() {
-			this.activeIndex = -1;
-			this.UPDATE_EDITINDEX('');
-		},
-		getMyTime(str, auto) {
-			if (!auto) str = str * this.locakMinutes;
-			return ((Math.floor(str / 60)).toString().length < 2 ? "0" + (Math.floor(str / 60)).toString() : (Math.floor(str / 60)).toString()) + ":" + ((str % 60).toString().length < 2 ? "0" + (str % 60).toString() : (str % 60).toString());
-		},
+            console.log(startMin, endMin);
+        },
+        handleClickOutside() {
+            this.activeIndex = -1;
+            this.UPDATE_EDITINDEX('');
+        },
+        getMyTime(str, auto) {
+            if (!auto) str = str * this.locakMinutes;
+            return ((Math.floor(str / 60)).toString().length < 2 ? "0" + (Math.floor(str / 60)).toString() : (Math.floor(str / 60)).toString()) + ":" + ((str % 60).toString().length < 2 ? "0" + (str % 60).toString() : (str % 60).toString());
+        },
 
-		editMyBlock(index) {
-			this.activeIndex = index;
-			this.currBlock = this.blockList[index];
+        editMyBlock(index) {
+            this.activeIndex = index;
+            this.currBlock = this.blockList[index];
 
-			this.UPDATE_EDITINDEX(this.colIndex + '-' + this.activeIndex);
-			this.UPDATE_EDITBLOCK(_.cloneDeep(this.currBlock));
-		},
-		createBlock(index, evt) {
-			debugger
-			this.activeIndex = this.blockList.length; //this.blockList.length ? this.blockList.length - 1 : 0;
-			let target = evt.target.parentElement.parentElement; // 单元格目标
-			this.blockList.push({
-				index: this.activeIndex,
-				colIndex: this.colIndex,
-				rowIndex: index,
-				rect: {
-					top: index * this.timeutilHeight,
-					height: this.timeutilHeight
-				},
-				startTime: this.changeHourMinutestr(this.locakMinutes * index),
-				endTime: this.changeHourMinutestr(this.locakMinutes * (index + 1)),
-				allTimes: this.changeHourMinutestr(this.locakMinutes)
-            });
+            this.UPDATE_EDITINDEX(this.colIndex + '-' + this.activeIndex);
+            this.UPDATE_EDITBLOCK(_.cloneDeep(this.currBlock));
+        },
+        createBlock(index, evt) {
+            this.activeIndex = this.blockList.length; //this.blockList.length ? this.blockList.length - 1 : 0;
+            let target = evt.target.parentElement.parentElement; // 单元格目标
+            let obj = {
+                index: this.activeIndex,
+                colIndex: this.colIndex,
+                rowIndex: index,
+                rect: {
+                    top: index * this.timeutilHeight,
+                    height: this.timeutilHeight
+                },
+                startTime: this.changeHourMinutestr(this.locakMinutes * index),
+                endTime: this.changeHourMinutestr(this.locakMinutes * (index + 1)),
+                allTimes: this.changeHourMinutestr(this.locakMinutes)
+            };
+            this.blockList.push(obj);
+            //debugger
             this.currBlock = this.blockList[this.activeIndex];
+            console.log('this.blockList', this.blockList);
 
-			this.UPDATE_EDITINDEX(this.colIndex + '-' + this.activeIndex);
-			this.UPDATE_EDITBLOCK(_.cloneDeep(this.currBlock));
+            this.UPDATE_EDITINDEX(this.colIndex + '-' + this.activeIndex);
+            this.UPDATE_EDITBLOCK(_.cloneDeep(this.currBlock));
 
-		},
-		changeHourMinutestr(minutes, ext) {
-			if (minutes !== "0" && minutes !== "" && minutes !== null) {
-				return ((Math.floor(minutes / 60)).toString().length < 2 ? "0" + (Math.floor(minutes / 60)).toString() :
-					(Math.floor(minutes / 60)).toString()) + ":" + ((minutes % 60).toString().length < 2 ? "0" + (minutes % 60).toString() : (minutes % 60).toString());
-			}
-			else {
-				return "";
-			}
-		},
-		// 时间块resize后重新设定时长
-		resetTimes(hh) {
-			let minutes = (this.currBlock.rect.height / this.timeutilHeight) * this.locakMinutes;
-			this.currBlock.endTime = this.changeHourMinutestr((hh + this.currBlock.rowIndex) * this.locakMinutes);
-			this.currBlock.allTimes = this.changeHourMinutestr(minutes);
-			console.log('this.currBlock', this.currBlock);
-			this.UPDATE_EDITBLOCK(_.cloneDeep(this.currBlock));
-		},
-		handlerMouserDown(index, evt) {
-			//debugger
-			this.dragging = true;
-			this.currBlock = this.blockList[index];
-			const blockEle = evt.target.parentElement;
-			const blockRect = blockEle.getBoundingClientRect();
-			let dragState = {
-				startMouseTop: evt.clientY,
-				startHeight: this.currBlock.rect.height
-			}
-			const handleMouseMove = (event) => {
-				const deltaTop = event.clientY - dragState.startMouseTop;
-				this.currBlock.rect.height = dragState.startHeight + deltaTop;
-			}
-			const handleMouseUp = () => {
-				if (this.dragging) {
-					this.dragging = false;
-				}
-				// 锁定为常量this.timeutilHeight 的倍数
-				let hh = this.currBlock.rect.height / this.timeutilHeight;
-				if (!Number.isInteger(hh)) {
-					// 判断是否过半
-					let hg = Math.ceil(hh);
-					if ((hg - hh) < 0.5) {
-						hh = Math.ceil(hh);
-					} else {
-						hh = Math.floor(hh);
-					}
-					this.currBlock.rect.height = hh * this.timeutilHeight;
-				}
-				this.resetTimes(hh);
-				document.removeEventListener('mousemove', handleMouseMove);
-				document.removeEventListener('mouseup', handleMouseUp);
-				document.onselectstart = null;
-				document.ondragstart = null;
-			}
-			document.addEventListener('mousemove', handleMouseMove);
-			document.addEventListener('mouseup', handleMouseUp);
-		}
-	}
+        },
+        changeHourMinutestr(minutes, ext) {
+            if (minutes !== "0" && minutes !== "" && minutes !== null) {
+                return ((Math.floor(minutes / 60)).toString().length < 2 ? "0" + (Math.floor(minutes / 60)).toString() :
+                    (Math.floor(minutes / 60)).toString()) + ":" + ((minutes % 60).toString().length < 2 ? "0" + (minutes % 60).toString() : (minutes % 60).toString());
+            }
+            else {
+                return "";
+            }
+        },
+        // 时间块resize后重新设定时长
+        resetTimes(hh) {
+            let minutes = (this.currBlock.rect.height / this.timeutilHeight) * this.locakMinutes;
+            this.currBlock.endTime = this.changeHourMinutestr((hh + this.currBlock.rowIndex) * this.locakMinutes);
+            this.currBlock.allTimes = this.changeHourMinutestr(minutes);
+            console.log('this.currBlock', this.currBlock);
+            this.UPDATE_EDITBLOCK(_.cloneDeep(this.currBlock));
+        },
+        handlerMouserDown(index, evt) {
+            //debugger
+            this.dragging = true;
+            this.currBlock = this.blockList[index];
+            const blockEle = evt.target.parentElement;
+            const blockRect = blockEle.getBoundingClientRect();
+            let dragState = {
+                startMouseTop: evt.clientY,
+                startHeight: this.currBlock.rect.height
+            }
+            const handleMouseMove = (event) => {
+                const deltaTop = event.clientY - dragState.startMouseTop;
+                this.currBlock.rect.height = dragState.startHeight + deltaTop;
+            }
+            const handleMouseUp = () => {
+                if (this.dragging) {
+                    this.dragging = false;
+                }
+                // 锁定为常量this.timeutilHeight 的倍数
+                let hh = this.currBlock.rect.height / this.timeutilHeight;
+                if (!Number.isInteger(hh)) {
+                    // 判断是否过半
+                    let hg = Math.ceil(hh);
+                    if ((hg - hh) < 0.5) {
+                        hh = Math.ceil(hh);
+                    } else {
+                        hh = Math.floor(hh);
+                    }
+                    this.currBlock.rect.height = hh * this.timeutilHeight;
+                }
+                this.resetTimes(hh);
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', handleMouseUp);
+                document.onselectstart = null;
+                document.ondragstart = null;
+            }
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+        }
+    }
 }
 </script>
 
@@ -282,7 +278,7 @@ export default {
 		border: 1px solid #ddd;
 		box-shadow: 2px 2px 2px 0 rgba(0, 0, 0, 0.1);
 		transition: all 0.25s;
-		//overflow: hidden;
+		user-select: none;
 		&.active {
 			background-color: #f5faff;
 			border-color: #b1ccff;
@@ -312,12 +308,12 @@ export default {
 			padding: 5px 0;
 			font-size: 12px;
 			box-sizing: border-box;
-            height: calc(100% - 25px);
-            overflow: hidden;
+			height: calc(100% - 25px);
+			overflow: hidden;
 			> div {
-				//margin-bottom: 10px;
 				transform: scale(0.9);
 				line-height: 22px;
+				word-break: break-all;
 			}
 		}
 		.resize {
