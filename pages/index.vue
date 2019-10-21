@@ -6,7 +6,7 @@
                     <i :class="panel.icon" />
                     <div class="card-panelwrapper">
                         <h3>{{panel.label}}
-                            <i class="el-icon-more-outline" />
+                            <i class="el-icon-more" />
                         </h3>
                         <count-to :start-val="0" :end-val="panel.endVal" :duration="panel.duration" class="card-panel-num" />
                     </div>
@@ -33,10 +33,10 @@ export default {
     },
     data: () => ({
         panelList: [
-            { label: "员工数", "name": "userlist", icon: "el-icon-user", color: "", endVal: 280, duration: 1200 },
-            { label: "本周工时合计", "name": "userlist", icon: "el-icon-timer blue", endVal: 54000, duration: 1200 },
-            { label: "我的代办事项", "name": "userlist", icon: "el-icon-suitcase red", endVal: 20, duration: 3000 },
-            { label: "信息中心", "name": "userlist", icon: "el-icon-chat-line-square orange", endVal: 130, duration: 3000 }
+            { label: "员工数", "name": "userlist", path:"/userinfo/list", icon: "el-icon-user", color: "", endVal: 280, duration: 1200 },
+            { label: "本周工时合计", "name": "userlist", path:"/work/time", icon: "el-icon-timer blue", endVal: 54000, duration: 1200 },
+            { label: "我的代办事项", "name": "userlist", path:"/work/todo", icon: "el-icon-suitcase red", endVal: 20, duration: 3000 },
+            { label: "信息中心", "name": "userlist", path:"/infomation", icon: "el-icon-chat-line-square orange", endVal: 130, duration: 3000 }
         ]
     }),
     computed: {
@@ -61,6 +61,7 @@ export default {
         //...mapMutations(['UPDATE_EDITINGTIME']),
         gopath(obj) {
             console.log('path', obj);
+            this.$router.push(obj.path);
         },
 
         // 获取已有的数据

@@ -1,8 +1,8 @@
 <template>
     <section class="chart-container">
-        <no-ssr>
+        <client-only>
             <echart :options="chartItem" ref="myEchart" :autoresize="true" />
-        </no-ssr>
+        </client-only>
     </section>
 </template>
 

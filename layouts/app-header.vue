@@ -3,8 +3,12 @@
 		<div class="left">
 			<i :class="sidebar.opened?'el-icon-s-fold':'el-icon-s-unfold'" :title="sidebar.opened?'收起导航':'展开导航'"
 				@click="TOGGLE_SIDEBAR" />
-			<span>个人时钟管理</span>
-
+			<div class="page-title">
+                <el-breadcrumb separator-class="el-icon-arrow-right">
+                    <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+                    <el-breadcrumb-item v-for="(page,index) in pageTitle" :key="index">{{page.label}}</el-breadcrumb-item>
+                </el-breadcrumb>
+            </div>
 		</div>
 		<div class="right">
 			<i class="avatar" style="background-image:url('/images/head_male.jpg')" />
@@ -19,11 +23,41 @@ import {
 	mapState, mapMutations
 } from 'vuex';
 export default {
+    watch: {
+		'$route': 'setRouter'
+    },
+    data:()=>({
+        pageTitle:[],
+    }),
 	computed: {
-		...mapState(['sidebar']),
+		...mapState(['sidebar', 'navMenu']),
 	},
 	methods: {
-		...mapMutations(['TOGGLE_SIDEBAR','UPDATE_USER']),
+        ...mapMutations(['TOGGLE_SIDEBAR','UPDATE_USER','UPDATE_MENUACTIVE']),
+        setRouter(){
+            //console.log('this.$route.path',this.$route.path);
+            let actIndex = '';
+            this.pageTitle = [];
+            let pathArr = this.$route.path.split('/');
+            if(!pathArr[0]){
+                pathArr.splice(0, 1);
+            }
+            let pIndex = _.findIndex(this.navMenu, {"name":pathArr[0]});
+            if(!!~pIndex){
+                let menu = this.navMenu[pIndex];
+                actIndex += pIndex;
+                this.pageTitle.push(menu);
+                if(menu.children && menu.children.length){
+                    let childIndex = _.findIndex(menu.children, {"name":pathArr[1]});
+                    if(!!~childIndex){
+                        actIndex += '-' + childIndex;
+                        let child = menu.children[childIndex];
+                        this.pageTitle.push(child);
+                    }
+                }
+                this.UPDATE_MENUACTIVE(actIndex);
+            }
+        },
 		logout() {
 			this.$confirm('确定注销退出?', '提示', {
 				confirmButtonText: '确定',
@@ -37,7 +71,10 @@ export default {
 			}).catch(() => {});
 
 		}
-	}
+    },
+    mounted(){
+        this.setRouter();
+    }
 }
 </script>
 
@@ -55,10 +92,10 @@ export default {
 			color: #51627f;
 			cursor: pointer;
 			margin-right: 15px;
-		}
-		> span {
-			font-size: 16px;
-		}
+        }
+        /deep/ .el-breadcrumb{
+            font-size:16px;
+        }
 	}
 	.right {
 		display: flex;

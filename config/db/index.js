@@ -95,6 +95,31 @@ module.exports = {
                 default: '',
                 label: '姓名'
             },
+            sex: {
+                type: Number,
+                default: 1,
+                label: '性别'
+            },
+            brithday: {
+                type: String,
+                default: '',
+                label: '生日'
+            },
+            mobile: {
+                type: String,
+                default: '',
+                label: '联系电话'
+            },
+            mail: {
+                type: String,
+                default: '',
+                label: '邮箱'
+            },
+            org: {
+                type: Number,
+                default: 0,
+                label: '部门'
+            },
             token: {
                 type: String,
                 default: '',
@@ -104,6 +129,16 @@ module.exports = {
                 type: String,
                 default: '',
                 label: '描述'
+            },
+            createDate: {
+                type: Number,
+                default: 0,
+                label: '创建时间'
+            },
+            updateDate: {
+                type: Number,
+                default: 0,
+                label: '创建时间'
             }
         },
 

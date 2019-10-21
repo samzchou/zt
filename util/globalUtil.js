@@ -48,6 +48,81 @@ export default {
         });
         return arr;
     },
+    // 获取每月有几周
+    getWeeks(year, month) {
+        let d = new Date();
+        // 该月第一天
+        d.setFullYear(year, month - 1, 1);
+        let w1 = d.getDay() || 7; //if (w1 == 0) w1 = 7;
+        // 该月天数
+        d.setFullYear(year, month, 0);
+        let dd = d.getDate();
+        // 第一个周一
+        let d1;
+        if (w1 != 1) {
+            d1 = 7 - w1 + 2;
+        } else {
+            d1 = 1;
+        }
+        let week_count = Math.ceil((dd - d1 + 1) / 7);
+        return week_count;
+    },
+    // 获取每月第几周的日期范围
+    getWeekTime(year, month, weekday) {
+        var d = new Date();
+        // 该月第一天
+        d.setFullYear(year, month - 1, 1);
+        var w1 = d.getDay();
+        if (w1 == 0) w1 = 7;
+        // 该月天数
+        d.setFullYear(year, month, 0);
+        var dd = d.getDate();
+        // 第一个周一
+        let d1;
+        if (w1 != 1) d1 = 7 - w1 + 2;
+        else d1 = 1;
+        var monday = d1 + (weekday - 1) * 7;
+        var sunday = monday + 6;
+        var from = year + "-" + month + "-" + monday;
+        var to;
+        if (sunday <= dd) {
+            to = year + "-" + month + "-" + sunday;
+        } else {
+            d.setFullYear(year, month - 1, sunday);
+            let days = d.getDate();
+            to = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + days;
+        }
+        console.log(weekday + " 从" + from + " 到 " + to + "");
+    },
+    // 获取每月第几周的周一的日期
+    getMondayTime(year, month, weekday) {
+        var d = new Date();
+        // 该月第一天
+        d.setFullYear(year, month - 1, 1);
+        var w1 = d.getDay();
+        if (w1 == 0) w1 = 7;
+        // 该月天数
+        d.setFullYear(year, month, 0);
+        var dd = d.getDate();
+        // 第一个周一
+        let d1;
+        if (w1 != 1) d1 = 7 - w1 + 2;
+        else d1 = 1;
+        var monday = d1 + (weekday - 1) * 7;
+        return monday;
+    },
+    // 获取当月最后一天日期
+    getLastDay(year, month) {
+        var new_year = year;    //取当前的年份
+        var new_month = month++;//取下一个月的第一天，方便计算（最后一天不固定）
+        if (month > 12) {
+            new_month -= 12;        //月份减
+            new_year++;            //年份增
+        }
+        var new_date = new Date(new_year, new_month, 1);                //取当年当月中的第一天
+        return (new Date(new_date.getTime() - 1000 * 60 * 60 * 24)).getDate();//获取当月最后一天日期
+    },
+
     // 比较两个Object差异,返回一个新的对象，created By sam
     difference(obj1, obj2) {
         const changes = (obj1, obj2) => {

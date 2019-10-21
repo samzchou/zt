@@ -49,7 +49,7 @@ export default {
 		box-sizing: border-box;
 		border-right: 1px solid #adc0cc;
 		&.collapse {
-			width: 0 !important;
+			width: 70px !important;
 			.el-submenu__title {
 				padding-left: 10px !important;
 			}
@@ -65,10 +65,9 @@ export default {
 	.el-main {
 		padding: 0;
 		overflow: hidden;
-
 		.main-content {
 			height: 100%;
-			background-color: #eee;
+			//background-color: #eee;
 		}
 		/* .scrollbar{
             height: 100%;

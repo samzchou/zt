@@ -23,7 +23,6 @@
                 <el-table-column v-for="(day,index) in weekList" :key="index">
                     <template slot="header" slot-scope="scope">
                         <ul class="header-list">
-                            <!-- <li>{{scope.$index}}</li> -->
                             <li v-for="(canledar,idx) in weekList[index]['canledar']" :key="idx" v-html="getCanledar(canledar, idx)"></li>
                         </ul>
                     </template>
@@ -31,10 +30,7 @@
                         <ul class="header-list">
                             <li v-for="(list,idx) in scope.row.list" :key="idx">
                                 <div>{{getAllTimes(list)}}</div>
-                                <!-- <div>{{getAllTimes(blocks)}}</div> -->
-                                <!-- {{getAllTime(blocks)}} -->
                             </li>
-                            <!-- {{scope.row}} -->
                         </ul>
                     </template>
                 </el-table-column>

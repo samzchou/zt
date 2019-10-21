@@ -201,7 +201,7 @@ const dbFun = {
         }
         return response;
     },
-    
+
     /*--------批量更新数据--------*/
     async updateArr(params) {
         const tn = params.collectionName;
@@ -230,6 +230,9 @@ const dbFun = {
     async updateData(params) {
         const tn = params.collectionName;
         let data = params.data;
+        if (data.password) {
+            data.password = this._setHash(data.password);
+        }
         let condition = data.id ? { id: data.id } : params.condition;
         if (params.updateDate) {
             data.updateDate = new Date().getTime();
@@ -254,7 +257,7 @@ const dbFun = {
         }
         return response;
     },
-    
+
     /*--------列出所有订单的指定字段列-------*/
     async getColumns(params) {
         const tn = params.collectionName;

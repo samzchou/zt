@@ -1,43 +1,79 @@
 <template>
-    <section class="aside-container">
-        <div class="title">
-            <div class="logo" />
-        </div>
-        <div class="content">
-            <ul>
-                <li v-for="(item,index) in menuList" :key="index" :class="{'active':item.name==activeName}">
-                    <div>
-                        <i :class="item.icon" />
-                        <span>{{item.label}}</span>
-                        <i class="arrow" />
-                    </div>
-                    <!-- <ul>
-                        <li v-for="(child,idx) in item.children" :key="idx">
-                            <div class="">
-                                <span>{{child.label}}</span>
-                            </div>
-                        </li>
-                    </ul> -->
-                </li>
-            </ul>
-        </div>
-    </section>
+	<section class="aside-container">
+		<div class="title">
+			<div class="logo" :class="{'mini':!sidebar.opened}" />
+		</div>
+		<div class="content">
+			<el-scrollbar class="scrollbar">
+				<el-menu :collapse="!sidebar.opened" :default-active="activeIndex">
+					<el-submenu v-for="(menu,idx) in menuList" :key="idx" :index="String(idx)">
+						<template slot="title">
+							<i :class="menu.icon" v-if="menu.icon" />
+							<span slot="title">{{menu.label}}</span>
+						</template>
+						<el-menu-item v-for="(subMenu,sidx) in menu.children" :key="idx+'-'+sidx" :index="idx+'-'+sidx"
+							@click="goPath(subMenu.path, idx+'-'+sidx)">
+							<i :class="subMenu.icon" v-if="subMenu.icon" />
+							<span>{{subMenu.label}}</span>
+						</el-menu-item>
+					</el-submenu>
+				</el-menu>
+			</el-scrollbar>
+		</div>
+	</section>
 </template>
 
 <script>
+import {
+	mapState,
+	mapMutations
+} from 'vuex';
+//import navMenu from '@/config/navMenu';
 export default {
-    data: () => ({
-        menuList: [
-            { label: "个人信息管理", name: "userinfo", icon: "el-icon-user", children: [{ label: "个人时钟管理", name: "times" }, { label: "个人信息", name: "info" }] },
-            { label: "工作管理", name: "work", icon: "el-icon-document-copy" },
-            { label: "行政中心", name: "executive", icon: "el-icon-suitcase" },
-            { label: "信息中心", name: "infomation", icon: "el-icon-paperclip" },
-            { label: "交互中心", name: "interactive", icon: "el-icon-magic-stick" },
-            { label: "知识中心", name: "knowledge", icon: "el-icon-connection" },
-            { label: "系统管理", name: "system", icon: "el-icon-set-up" }
-        ],
-        activeName: 'userinfo'
-    })
+    watch: {
+        '$route': 'setRouter'
+    },
+	computed: {
+		...mapState(['sidebar','navMenu']),
+    },
+
+	data: () => ({
+		isCollapse: false,
+		menuList: [],
+		activeIndex: "",
+    }),
+    methods:{
+        //...mapMutations(['UPDATE_PAGETITLE']),
+        setRouter(){
+            this.activeIndex = '';
+            let pathArr = this.$route.path.split('/');
+            if(!pathArr[0]){
+                pathArr.splice(0, 1);
+            }
+            let pIndex = _.findIndex(this.navMenu, {"name":pathArr[0]});
+            if(!!~pIndex){
+                this.activeIndex += pIndex;
+                let menu = this.navMenu[pIndex];
+                if(menu.children && menu.children.length){
+                    let childIndex = _.findIndex(menu.children, {"name":pathArr[1]});
+                    if(!!~childIndex){
+                        this.activeIndex += '-' + childIndex;
+                    }
+                }
+            }
+            console.log('this.activeIndex', this.activeIndex)
+        },
+        goPath(path, index){
+            //this.UPDATE_PAGETITLE(index);
+            this.$router.push(path);
+        }
+    },
+    beforeMount(){
+        this.menuList = this.navMenu;
+    },
+    mounted(){
+        this.setRouter();
+    }
 }
 </script>
 
@@ -46,7 +82,6 @@ export default {
 	width: calc(100% - 5px);
 	height: 100%;
 	background-color: #e5ebf5;
-
 	.title {
 		height: 50px;
 		box-shadow: 0 1px 4px rgba(18, 72, 90, 0.12);
@@ -61,53 +96,48 @@ export default {
 			background-image: url(/images/logo.png);
 			background-repeat: no-repeat;
 			background-position: 10px 0px;
-			background-size: contain;
+            background-size: contain;
+            &.mini{
+                width: 55px;
+                background-position: 16px 0;
+                background-size: cover;
+            }
 		}
 	}
 	.content {
 		height: calc(100% - 50px);
 		box-sizing: border-box;
-		padding: 15px;
-		> ul {
-			padding: 0;
-			margin: 0;
-			li {
-				> div {
-					position: relative;
-					display: flex;
-					align-items: center;
-					height: 35px;
-					cursor: pointer;
-					> i {
-						margin-right: 10px;
-						&.arrow {
-							font-family: element-icons !important;
-							position: absolute;
-							right: 0;
-							color: #ccc;
-							color: #969696;
-							font-style: normal;
-							&:before {
-								content: '\e6df';
-							}
-						}
-					}
+		//padding: 15px;
+		.scrollbar {
+			height: calc(100% - 20px);
+			/deep/ .el-scrollbar__wrap {
+				overflow-x: hidden;
+				//margin-right:0 !important;
+				.el-menu--collapse {
+					width: auto;
 				}
-				> ul {
-					margin: 0 0 10px 25px;
-					display: none;
+			}
+		}
+		/deep/ .el-menu {
+			border: 0;
+			background-color: transparent;
+			.el-submenu__title {
+				font-weight: bold;
+				height: 50px;
+				line-height: 50px;
+				transition: all 0.2s;
+				color: #666;
+				.el-submenu__icon-arrow {
+					right: 40px;
 				}
-				&:hover,
-				&.active {
-					> div {
-						color: $c-main;
-						.arrow::before {
-							content: '\e6e1';
-						}
-					}
-					> ul {
-						display: block;
-					}
+			}
+			.el-menu-item {
+				height: 36px;
+				line-height: 36px;
+				min-width: auto;
+				font-size: 12px;
+				i {
+					font-size: 14px;
 				}
 			}
 		}
