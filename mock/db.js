@@ -283,11 +283,13 @@ const dbFun = {
         let tn = params.collectionName;
         let data = params.data;
         let result = await mongoDB[tn].findOne(data);
-        return {
+
+		let response = {
             success: result ? true : false,
-            msgDesc: result ? null : '获取数据失败',
+            msgDesc: result ? null : '没有可查询的数据',
             response: result
         }
+        return response;
     },
     /*--------删除数据--------*/
     async removeData(params) {

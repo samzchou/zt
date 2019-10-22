@@ -57,10 +57,15 @@ module.exports = {
                 default: 0,
                 label: '用户ID'
             },
-            date: {
+            startdate: {
                 type: Number,
                 default: 0,
                 label: '当前周一时间'
+            },
+			enddate: {
+                type: Number,
+                default: 0,
+                label: '当前周日时间'
             },
             content: {
                 type: Object,

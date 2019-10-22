@@ -69,7 +69,7 @@ export default {
         },
         dataList: {
             handler(data) {
-                //this.blockList = [...data]; //_.cloneDeep(data);
+                this.blockList = [];
                 if (data && data.length) {
                     this.blockList = data.map(item => {
                         return item;

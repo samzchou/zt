@@ -50,9 +50,9 @@ export default {
                         console.log('watch timeWork editBlock', this.ruleForm);
                     }
                 }
-                this.$nextTick(() => {
+                /* this.$nextTick(() => {
                     this.$refs.myForm.clearValidate();
-                })
+                }) */
             },
             //deep:true
             immediate: true

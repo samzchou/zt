@@ -11,7 +11,7 @@
 			</div>
 		</div>
 		<div class="tables">
-			<el-table size="mini" v-loading="listLoading" :data="listData.slice((query.page-1)*query.pagesize, query.page*query.size)" stripe border highlight-current-row fit
+			<el-table size="mini" v-loading="listLoading" :data="listData.slice((query.page-1)*query.size, query.page*query.size)" stripe border highlight-current-row fit
 				max-height="500" style="width: 100%">
 				<el-table-column type="index" label="序号" align="center" width="80" />
 				<el-table-column prop="username" label="用户账号" width="120" />
