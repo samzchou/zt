@@ -36,6 +36,15 @@ export default {
         satrtDate.setMinutes(min + minutes);
         return satrtDate;
     },
+	getAllTimes(list) {
+		let allTimes = 0;
+		list.forEach(item => {
+			let startMin = this.changeMyTimeToMin(item.startTime); //obj.startTime.split(':')[0];
+			let endMin = this.changeMyTimeToMin(item.endTime);
+			allTimes += (endMin - startMin);
+		});
+		return allTimes;
+	},
     // 检测两个DOM碰撞情况，created By sam
     hit(source, targets) {
         const sourceRect = source.getBoundingClientRect();

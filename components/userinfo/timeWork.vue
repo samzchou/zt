@@ -25,7 +25,7 @@
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="setWork">确定</el-button>
-                <el-button @click="$emit('close')">取消</el-button>
+                <el-button @click="cancelWork">取消</el-button>
             </el-form-item>
         </el-form>
     </section>
@@ -99,6 +99,9 @@ export default {
                     this.UPDATE_EDITBLOCK({ ...this.ruleForm });
                 }
             });
+        },
+        cancelWork(){
+            this.$emit('close');
         }
     },
     mounted() {

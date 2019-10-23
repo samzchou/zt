@@ -79,7 +79,7 @@ export default {
             let dt = new Date(this.dateSplit.join('-') + '-'+dd+' 00:00:00').getTime();
             let block = _.find(lists, {"date":dt})
             if(block && block.list.length){
-                let times = this.getAllTimes(block.list);
+                let times = this.$global.getAllTimes(block.list);
                 return this.$global.ChangeHourMinutestr(times);
             }else{
                 return "";
@@ -90,7 +90,7 @@ export default {
             let block = _.find(lists, {"date":dt});
             let percent = 0;
             if(block && block.list.length){
-                let times = this.getAllTimes(block.list);
+                let times = this.$global.getAllTimes(block.list);
                 let fullTimes = 8 * 60;
                 percent = Math.ceil((times/fullTimes)*100);
                 percent = percent>100?100:percent;
@@ -206,20 +206,10 @@ export default {
 			list.forEach(item => {
                 obj.lists = _.concat(obj.lists, item.content);
                 item.content.forEach(ls=>{
-                    obj.totalTime += this.getAllTimes(ls.list);
+                    obj.totalTime += this.$global.getAllTimes(ls.list);
                 })
 			})
 			return obj[key];
-		},
-		getAllTimes(list) {
-			console.log('list', list);
-			let allTimes = 0;
-			list.forEach(item => {
-				let startMin = this.$global.changeMyTimeToMin(item.startTime); //obj.startTime.split(':')[0];
-				let endMin = this.$global.changeMyTimeToMin(item.endTime);
-				allTimes += (endMin - startMin);
-			});
-			return allTimes;
 		},
 	},
 	mounted() {

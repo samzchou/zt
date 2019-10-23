@@ -18,8 +18,11 @@ $li-height: 20;
 			align-items: center;
 			.text {
 				color: #409eff;
-				//padding: 0 15px;
-			}
+            }
+            .all-times{
+                color:#CCC;
+                margin:0 15px;
+            }
 			.canlan {
 				margin: 0 15px;
 				/deep/ .el-date-editor {
@@ -77,7 +80,11 @@ $li-height: 20;
 						&.day {
 							font-weight: bold;
 							height: 100%;
-							padding: 0 10px;
+                            padding: 0 10px;
+                            .total-times{
+                                font-size: 12px;
+                                color: #bfbfbf;
+                            }
 						}
 						&.pos {
 							position: absolute;

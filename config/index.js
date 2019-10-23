@@ -1,5 +1,5 @@
 const domain = 'http://192.168.16.163:8081';
-const domainPort = 8888;
+const domainPort = 3300;
 const mongo = '127.0.0.1'; //192.168.16.151
 const mongoPort = 27017;
 

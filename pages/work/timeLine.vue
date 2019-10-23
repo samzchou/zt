@@ -16,6 +16,7 @@
 						format="yyyy年 第 WW 周" placeholder="选择周" @change="setDay" />
 				</div>
 				<div class="text" v-if="weekList.length">{{setWeekTitle}}, {{weekDay && weekDay.getFullYear()}}</div>
+				<div class="all-times">allTimes</div>
 			</div>
 			<div>
 				<el-button size="mini" icon="el-icon-time" type="primary" @click="saveData" style="margin-right:20px;">
@@ -45,7 +46,7 @@
 						<li v-for="(week,idx) in weekList" :key="idx">
 							<div class="day">
 								<div>{{week.wday}} {{getToday(week.date)}}</div>
-								<div></div>
+								<div class="total-times">{{changeHourMinutestr(week.allTimes)}}</div>
 							</div>
 							<div class="pos" />
 						</li>
@@ -56,7 +57,8 @@
 					<el-scrollbar ref="myScrollbar" class="scrollbar">
 						<ul class="week-list" id="week-list">
 							<li v-for="n in 7" :key="n" :class="{'active':n==2}">
-								<time-col :colIndex="n-1" :ref="`cols-${n-1}`" :dataList="blockList[n-1]?blockList[n-1]['list']:[]" />
+								<time-col :colIndex="n-1" :ref="`cols-${n-1}`"
+									:dataList="blockList[n-1]?blockList[n-1]['list']:[]" @addBlock="addBlock" />
 							</li>
 						</ul>
 						<div class="data-window" :class="{'show':showWindow}" :style="setWindowPos">
@@ -82,12 +84,11 @@ import {
 } from 'vuex'
 
 import timeCol from '~/components/userinfo/timeCol';
-import timeBlock from '~/components/userinfo/timeBlock';
 import timeWork from '~/components/userinfo/timeWork';
 
 export default {
 	components: {
-		timeCol, timeBlock, timeWork
+		timeCol, timeWork
 	},
 	data: () => ({
 		loading: true,
@@ -134,14 +135,22 @@ export default {
 	},
 	methods: {
 		...mapMutations(['UPDATE_EDITINGTIME']),
+		changeHourMinutestr(mins) {
+			mins = !mins ? 0 : mins;
+			return this.$global.ChangeHourMinutestr(mins);
+		},
 		showStatistical() {
 			this.$storage.session.set('weekList', this.weekList);
 			this.$router.push('/work/time');
 		},
+		// 新增时间钟数据
+		addBlock(colIndex, blockObj) {
+			this.blockList[colIndex]['list'].push(blockObj);
+			console.log('addBlock this.blockList', this.blockList);
+		},
 		// 编辑时间块信息
 		editBlockInfo() {
 			this.showWindow = true;
-			//debugger
 			const colIndex = this.editBlock.colIndex;
 			const colLi = document.getElementById("week-list").childNodes[colIndex];
 			if (colLi) {
@@ -151,15 +160,25 @@ export default {
 				if (this.windowPostion.left + 350 > containerWidth) {
 					this.windowPostion.left = colLi.offsetLeft - 350;
 				}
+				this.calcAllTimes();
 			}
-		},
+        },
+        // 取消关闭
 		closeEdit() {
-			this.UPDATE_EDITINGTIME(false);
+            console.log('this.editBlock')
+            this.UPDATE_EDITINGTIME(false);
 			this.showWindow = false;
 		},
-		// 保存数据
-		saveData() {
-			//debugger
+		// 计算每天的总工时
+		calcAllTimes(list) {
+			list = !list ? this.getAllBlockList() : list;
+			// console.log('calcAllTimes list', list);
+			list.forEach((block, i) => {
+				this.weekList[i]['allTimes'] = this.$global.getAllTimes(block.list);
+			})
+			console.log('calcAllTimes', this.weekList);
+		},
+		getAllBlockList() {
 			let dataArr = [];
 			for (let i = 0; i < 7; i++) {
 				let blockList = this.$refs['cols-' + i][0].blockList;
@@ -168,10 +187,16 @@ export default {
 					list: blockList
 				});
 			}
+			return dataArr;
+		},
+		// 保存数据
+		saveData() {
+			//debugger
+			let dataArr = this.getAllBlockList();
 			let data = {
 				userId: this.$store.state.user.id,
 				startdate: this.weekList[0]['date'].getTime(),
-				enddate: this.weekList[6]['date'].getTime() + 24*60*60*1000 -1,
+				enddate: this.weekList[6]['date'].getTime() + 24 * 60 * 60 * 1000 - 1,
 				content: dataArr
 			}
 			let condition = {
@@ -185,9 +210,9 @@ export default {
 			condition.data = data;
 
 			this.$axios.$post('mock/db', { data: condition }).then(result => {
-				//console.log('result', result);
+				console.log('result', result);
 				this.timeData = result;
-				//this.$message.success("保存成功！");
+				this.$message.success("保存成功！");
 				this.showWindow = false;
 			});
 		},
@@ -195,7 +220,6 @@ export default {
 			return moment(date).format('MM-DD');
 		},
 		setWeek(val, thisWeek) {
-
 			this.isCurrWeek = val;
 			if (!thisWeek) {
 				let dp = this.weekDay.setDate(this.weekDay.getDate() + val);
@@ -203,7 +227,7 @@ export default {
 			} else {
 				this.weekDay = new Date();
 			}
-            this.setWeekList();
+			this.setWeekList();
 		},
 		setType(val) {
 			this.viewType = val;
@@ -230,15 +254,16 @@ export default {
 			let timesStamp = this.weekDay.getTime();
 			let currenDay = this.weekDay.getDay();
 			this.weekArray.forEach((w, i) => {
-                let day = timesStamp + 24 * 60 * 60 * 1000 * (i - (currenDay + 6) % 7);
-                let st =  new Date(new Date(new Date(day).toLocaleDateString()));
+				let day = timesStamp + 24 * 60 * 60 * 1000 * (i - (currenDay + 6) % 7);
+				let st = new Date(new Date(new Date(day).toLocaleDateString()));
 				let obj = {
 					'wday': w,
-					'date': st
+					'date': st,
+					'allTimes': 0
 				}
 				this.weekList.push(obj);
 			});
-			console.log('this.weekList', this.weekList);
+			//console.log('this.weekList', this.weekList);
 			// 获取数据
 			this.getList();
 		},
@@ -248,20 +273,26 @@ export default {
 			this.blockList = [];
 			let condition = {
 				type: "getData",
-                collectionName: "timeBlock",
+				collectionName: "timeBlock",
 				data: {
-					//startdate: {$gte:this.weekList[0]['date'].getTime(),$lte:this.weekList[6]['date'].getTime()},
 					startdate: this.weekList[0]['date'].getTime(),
 					userId: this.$store.state.user.id
 				}
 			}
 			let result = await this.$axios.$post('mock/db', { data: condition });
-            console.log('getList', result);
-            //debugger
+			//console.log('getList', result);
 			if (result) {
-                this.timeData = result;
-                this.blockList = result.content;
-                console.log('getList', this.blockList);
+				this.timeData = result;
+				this.blockList = result.content;
+				//console.log('this blockList', this.blockList);
+				this.calcAllTimes(this.blockList);
+			} else {
+				for (let i = 0; i < 7; i++) {
+					this.blockList[i] = {
+						date: this.weekList[i]['date'].getTime(),
+						list: []
+					};
+				}
 			}
 		}
 	},
@@ -277,6 +308,7 @@ export default {
 				let hours = new Date().getHours();
 				this.$refs.myScrollbar.wrap.scrollTop = hours * this.timeutilHeight * 4;
 				this.loading = false;
+				//this.calcAllTimes();
 			}, 1000);
 		})
 	},

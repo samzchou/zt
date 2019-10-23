@@ -22,6 +22,7 @@ export const state = () => ({
     isEditTime:false,
     editBlock: null,
     editIndex: '',
+	userTimeBlocks:[],
 })
 
 export const mutations = {
@@ -35,6 +36,9 @@ export const mutations = {
         if (!process.server) {
             this.app.$storage.set('user', state.user);
         }
+    },
+	UPDATE_USERBLOCK(state, obj) {
+        state.userTimeBlocks = obj;
     },
     UPDATE_EDITBLOCK(state, obj) {
         state.editBlock = obj;

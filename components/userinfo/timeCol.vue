@@ -34,15 +34,11 @@ import {
     mapState,
     mapMutations
 } from 'vuex'
-import timeBlock from './timeBlock';
 export default {
     directives: { Clickoutside },
     props: {
         colIndex: Number,
         dataList: Array
-    },
-    components: {
-        timeBlock
     },
     computed: {
         ...mapState(['workType', 'workProject', 'timeutilHeight', 'locakMinutes', 'editIndex', 'editBlock']),
@@ -55,11 +51,14 @@ export default {
                         this.activeIndex = _.findIndex(this.blockList, { 'index': obj.index });
                         this.currBlock = this.blockList[this.activeIndex];
                         // 如果数据有所改变则更新
+                        debugger
                         if (!_.isEmpty(this.$global.difference(obj, this.currBlock))) {
+                            //
                             this.currBlock = _.cloneDeep(obj);
                             let conditions = this.updatePosition(this.currBlock);
                             this.currBlock = _.merge(this.currBlock, conditions);
                             this.$set(this.blockList, this.activeIndex, this.currBlock);
+                            this.$emit('updateList', this.blockList, this.colIndex);
                             //console.log('watch timeCol editBlock', this.currBlock);
                         }
                     }
@@ -69,8 +68,8 @@ export default {
         },
         dataList: {
             handler(data) {
-                this.blockList = [];
-                if (data && data.length) {
+                //this.blockList = [];
+                if(data && _.isArray(data)){
                     this.blockList = data.map(item => {
                         return item;
                     });
@@ -152,13 +151,12 @@ export default {
                 allTimes: this.changeHourMinutestr(this.locakMinutes)
             };
             this.blockList.push(obj);
-            //debugger
-            this.currBlock = this.blockList[this.activeIndex];
-            console.log('this.blockList', this.blockList);
+            this.currBlock = obj;
+            //console.log('this.blockList', this.blockList);
+            this.$emit('addBlock', this.colIndex, obj);
 
             this.UPDATE_EDITINDEX(this.colIndex + '-' + this.activeIndex);
             this.UPDATE_EDITBLOCK(_.cloneDeep(this.currBlock));
-
         },
         changeHourMinutestr(minutes, ext) {
             if (minutes !== "0" && minutes !== "" && minutes !== null) {
