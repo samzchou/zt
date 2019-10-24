@@ -61,19 +61,5 @@ export default {
                 { "label": "操作权限", "icon": "el-icon-document-copy", "path": "/systems/role" }
             ]
         }
-    ],
-	"orgList":[
-		{
-            "label": "总经办部",
-            "id": 1
-        },
-		{
-            "label": "设计部",
-            "id": 2
-        },
-		{
-            "label": "人事部",
-            "id": 3
-        }		
-	]
+    ]
 }
