@@ -328,14 +328,12 @@ const dbFun = {
         let token = jwt.sign(content, tokenPrefix, {
             expiresIn: 60 * 60 * 1 // 1小时过期
         });
+        data.password = this._setHash(data.password);
 
-        if (data.password) {
-            data.password = this._setHash(data.password);
-        }
         let result = await mongoDB[tn].findOne(data);
         if (result) {
             result.token = token;
-            this.updateData({ collectionName: tn, data: result });
+            this.updateData({ collectionName: tn, data: { "id": result.id, "token": token} });
         }
         return {
             success: result ? true : false,

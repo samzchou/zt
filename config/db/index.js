@@ -1,37 +1,37 @@
 /* eslint-disable */
 const optionSet = require('./options');
 module.exports = {
-    dbConect: { "dataUrl": "127.0.0.1", "dataPort": "27017", "dataName": "zt", "username": "", "password": "" }, //47.91.231.119
+    dbConect: { "dataUrl": "127.0.0.1", "dataPort": "27017", "dataName": "zt", "username": "", "password": "" },
     collections: {
         /*--------------ID自增计数器--------------*/
         counters: {
             model: {
-                type: 'String',
+                type: String,
                 default: '',
             },
             count: {
-                type: 'Number',
+                type: Number,
                 default: 0
             }
         },
         /*----------权限数据-----------*/
         role: {
             id: {
-                type: 'Number',
+                type: Number,
                 default: 0
             },
             name: {
-                type: 'String',
+                type: String,
                 default: '',
                 label: '名称命名'
             },
             tag: {
-                type: 'String',
+                type: String,
                 default: '',
                 label: '标签识别'
             },
             content: {
-                type: 'String',
+                type: String,
                 default: '',
                 label: '描述'
             }
@@ -39,21 +39,21 @@ module.exports = {
         /*----------权限数据-----------*/
         timeBlock: {
             id: {
-                type: 'Number',
+                type: Number,
                 default: 0
             },
             userId: {
-                type: 'Number',
+                type: Number,
                 default: 0,
                 label: '用户ID'
             },
             startdate: {
-                type: 'Number',
+                type: Number,
                 default: 0,
                 label: '当前周一时间'
             },
             enddate: {
-                type: 'Number',
+                type: Number,
                 default: 0,
                 label: '当前周日时间'
             },
@@ -67,17 +67,17 @@ module.exports = {
         /*----------用户数据-----------*/
         user: {
             id: {
-                "type": 'Number',
+                "type": Number,
                 "default": 0
             },
             org: {
-                "type": 'Array',
+                "type": Array,
                 "component": "sam-cascader",
                 "default": [],
                 "label": '所属部门'
             },
             username: {
-                "type": 'String',
+                "type": String,
                 "component": "sam-input",
                 "cptype": "text",
                 "required": true,
@@ -85,7 +85,7 @@ module.exports = {
                 "label": '用户名'
             },
             password: {
-                "type": 'String',
+                "type": String,
                 "component": "sam-input",
                 "cptype": "password",
                 "required": true,
@@ -93,7 +93,7 @@ module.exports = {
                 "label": '密码'
             },
             name: {
-                "type": 'String',
+                "type": String,
                 "component": "sam-input",
                 "cptype": "text",
                 "required": true,
@@ -101,14 +101,14 @@ module.exports = {
                 "label": '姓名'
             },
             sex: {
-                "type": 'Number',
+                "type": Number,
                 "component": "sam-radio",
                 "options": [{ "label": "男", "id": 1 }, { "label": "女", "id": 2 }],
                 "default": 1,
                 "label": '性别'
             },
             brithday: {
-                "type": 'Number',
+                "type": Number,
                 "component": "sam-date-picker",
                 "cptype": "date",
                 "required": true,
@@ -116,7 +116,7 @@ module.exports = {
                 "label": '出生日期'
             },
             native: {
-                "type": 'Array',
+                "type": Array,
                 "component": "sam-city-picker",
                 "options": optionSet.citys,
                 "required": true,
@@ -124,7 +124,7 @@ module.exports = {
                 "label": '籍贯'
             },
             residenceAdress: {
-                "type": 'String',
+                "type": String,
                 "component": "sam-input",
                 "cptype": "text",
                 "required": true,
@@ -132,7 +132,7 @@ module.exports = {
                 "label": '户籍地址'
             },
             residenceNature: {
-                "type": 'Number',
+                "type": Number,
                 "component": "sam-radio",
                 "options": [{ "label": "非农", "id": 1 }, { "label": "农业", "id": 2 }],
                 "required": true,
@@ -140,7 +140,7 @@ module.exports = {
                 "label": '户口性质'
             },
             nation: {
-                "type": 'Number',
+                "type": Number,
                 "component": "sam-select",
                 "options": optionSet.nation,
                 "required": true,
@@ -148,7 +148,7 @@ module.exports = {
                 "label": '民族'
             },
             highEducation: {
-                "type": 'Number',
+                "type": Number,
                 "component": "sam-select",
                 "options": [
                     { "label": "小学", "id": 1 },
@@ -164,7 +164,7 @@ module.exports = {
                 "label": '最高学历'
             },
             highDegree: {
-                "type": 'Number',
+                "type": Number,
                 "component": "sam-select",
                 "options": [
                     { "label": "学士", "id": 1 },
@@ -175,21 +175,21 @@ module.exports = {
                 "label": '最高学位'
             },
             techPost: {
-                "type": 'String',
+                "type": String,
                 "component": "sam-input",
                 "cptype": "text",
                 "default": '',
                 "label": '专业技术职务'
             },
             techQua: {
-                "type": 'String',
+                "type": String,
                 "component": "sam-input",
                 "cptype": "text",
                 "default": '',
                 "label": '专业技术资格'
             },
             health: {
-                "type": 'Number',
+                "type": Number,
                 "component": "sam-select",
                 "options": [
                     { "label": "较差", "id": 1 },
@@ -201,7 +201,7 @@ module.exports = {
                 "label": '健康状况'
             },
             mobile: {
-                "type": 'String',
+                "type": String,
                 "component": "sam-input",
                 "cptype": "text",
                 "required": true,
@@ -209,7 +209,7 @@ module.exports = {
                 "label": '联系电话'
             },
             mail: {
-                "type": 'String',
+                "type": String,
                 "component": "sam-input",
                 "cptype": "mail",
                 "required": true,
@@ -217,7 +217,7 @@ module.exports = {
                 "label": '邮箱'
             },
             phone: {
-                "type": 'String',
+                "type": String,
                 "component": "sam-input",
                 "cptype": "text",
                 "required": true,
@@ -225,7 +225,7 @@ module.exports = {
                 "label": '办公电话'
             },
             address: {
-                "type": 'String',
+                "type": String,
                 "component": "sam-input",
                 "cptype": "text",
                 "required": true,
@@ -233,7 +233,7 @@ module.exports = {
                 "label": '家庭住址'
             },
             archivesAdress: {
-                "type": 'Array',
+                "type": Array,
                 "component": "vue-city-picker",
                 "options": optionSet.citys,
                 "required": true,
@@ -241,7 +241,7 @@ module.exports = {
                 "label": '档案所在地'
             },
             marriage: {
-                "type": 'Number',
+                "type": Number,
                 "component": "sam-select",
                 "options": [
                     { "label": "未婚", "id": 1 },
@@ -253,7 +253,7 @@ module.exports = {
                 "label": '婚姻状况'
             },
             politics: {
-                "type": 'Number',
+                "type": Number,
                 "component": "sam-select",
                 "options": [
                     { "label": "群众", "id": 1 },
@@ -267,7 +267,7 @@ module.exports = {
                 "label": '政治面貌'
             },
             politicsDate: {
-                "type": 'Number',
+                "type": Number,
                 "component": "sam-date-picker",
                 "cptype": "date",
                 "required": true,
@@ -276,7 +276,7 @@ module.exports = {
                 "label": '入党（团）日期'
             },
             politicsAdress: {
-                "type": 'Array',
+                "type": Array,
                 "component": "vue-city-picker",
                 "options": optionSet.citys,
                 "required": true,
@@ -285,32 +285,32 @@ module.exports = {
                 "label": '党组织关系所在地'
             },
             politicsChange: {
-                "type": 'Number',
+                "type": Number,
                 "component": "sam-radio",
                 "options": [{ "label": "是", "id": 1 }, { "label": "否", "id": 2 }],
                 "default": 1,
                 "label": '是否打算将党组织关系转到公司'
             },
             token: {
-                "type": 'String',
+                "type": String,
                 "default": '',
                 "hide": true,
                 "label": '后台验证码'
             },
             content: {
-                "type": 'String',
+                "type": String,
                 "component": "sam-input",
                 "cptype": "text-area",
                 "default": '',
                 "label": '备注说明'
             },
             createDate: {
-                "type": 'Number',
+                "type": Number,
                 "default": new Date().getTime(),
                 "label": '创建时间'
             },
             updateDate: {
-                "type": 'Number',
+                "type": Number,
                 "default": new Date().getTime(),
                 "label": '最后更新时间'
             }

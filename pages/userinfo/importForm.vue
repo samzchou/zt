@@ -106,7 +106,7 @@ export default {
             //const files = file.raw;
             const fileReader = new FileReader();
             this.outputs = [];
-            fileReader.onload = (ev) => {
+            /* fileReader.onload = (ev) => {
                 try {
                     const data = ev.target.result;
                     const workbook = XLSX.read(data, {
@@ -140,7 +140,7 @@ export default {
                     return false;
                 }
             };
-            fileReader.readAsBinaryString(file.raw);
+            fileReader.readAsBinaryString(file.raw); */
         },
         saveImport() {
             this.loading = true;
