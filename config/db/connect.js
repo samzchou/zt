@@ -1,5 +1,6 @@
 /* eslint-disable */
 var dbServer = require('./index');
+//import mongoose from 'mongoose';
 const mongoose = require('mongoose');
 // 连接数据库
 var myUri = 'mongodb://' + dbServer.dbConect.dataUrl + ':' + dbServer.dbConect.dataPort + '/' + dbServer.dbConect.dataName;

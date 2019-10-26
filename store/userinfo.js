@@ -1,7 +1,9 @@
 /* eslint-disable */
-const dbConfig = require('../config/db/index.js');
-import VueCookies from 'vue-cookies';
+//const dbConfig = require('../config/db/index.js');
 
+const dbConfig = {
+	collections:{}
+};
 export const state = () => ({
     "orgList":[
         {

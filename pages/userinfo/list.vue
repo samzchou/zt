@@ -70,7 +70,7 @@ import searchInput from '~/components/searchInput';
 import addForm from './addForm';
 import importForm from './importForm';
 
-import samElement from '~/components/common';
+import samElement from '~/components/form';
 export default {
     computed: {
         ...mapState('userinfo', ['collections', 'orgList', 'sexList']),
