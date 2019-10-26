@@ -69,14 +69,7 @@
 <script>
 import XLSX from 'xlsx'
 const statusArr = { 'ready': '准备上传', 'progress': '上传中', 'error': '上传失败', 'success': '上传成功' };
-const xlxsKeys = {
-    "基本信息": {
-        "姓名": "name", "曾用户": "aliasName", "身份证号码": "idNumber", "性别": "sex"
-    },
-    "公司任职信息": {
-        "参加工作时间": "jobTime", "进入本公司时间": "joinTime", "用工期限": "limitTime", "主要职位": "majorPosition", "任职开始时间": "startTime", "部门": "department", "职务": "post"
-    }
-};
+
 const fields = { 'base': { 'name': '基本信息' }, 'office': { 'name': '公司任职信息' } };
 export default {
     name: "import-form",
