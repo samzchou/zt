@@ -5,6 +5,7 @@
 const dbServer = require('../config/db/');
 const mongoDB = require('../config/db/connect');
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 const _ = require('lodash');
 const crypto = require('crypto');
 const tokenPrefix = 'samz.com';
@@ -30,6 +31,46 @@ const dbFun = {
         return {
             success: true
         };
+    },
+    // 获取所有集合
+    async getCollection() {
+        let cols = await mongoose.connection.db.collections();
+        const distinct = ['colls', 'counters'];
+        let colStrArr = [];
+        for (let c of cols) {
+            if (!distinct.includes(c.collectionName)) {
+                colStrArr.push(c.collectionName);
+                //let data = this.listData({ "collectionName": "colls" })
+            }
+        }
+        /* var keys = Object.keys(dbServer.collections);
+        console.log('getCollection', colStrArr); */
+        return {
+            success: true,
+            response: colStrArr
+        }
+    },
+    // 创建一个新的集合
+    async createCollection(params) {
+        //var schema = new Schema(params.schema);
+        let response = {
+            success: false,
+            msgDesc: "创建失败"
+        };
+        try {
+            let res = await mongoose.connection.db.createCollection(params.name);
+            if (res.namespace) {
+                // 计数器
+                await mongoDB.counters.findOneAndUpdate({ 'model': 'colls' }, { $inc: { count: 1 } });
+                response = {
+                    success: true,
+                    response: 1
+                }
+            }
+            return response;
+        } catch (e) {
+            return response
+        }
     },
     async clearAll() {
         await mongoDB['counters'].updateMany({ model: { $in: ['order', 'store', 'storeCalc', 'storeIn', 'storeLoss', 'finance', 'ingred'] } }, { $set: { "count": 0 } });
@@ -284,7 +325,7 @@ const dbFun = {
         let data = params.data;
         let result = await mongoDB[tn].findOne(data);
 
-		let response = {
+        let response = {
             success: result ? true : false,
             msgDesc: result ? null : '没有可查询的数据',
             response: result
@@ -329,11 +370,12 @@ const dbFun = {
             expiresIn: 60 * 60 * 1 // 1小时过期
         });
         data.password = this._setHash(data.password);
+        console.log('password', data.password);
 
         let result = await mongoDB[tn].findOne(data);
         if (result) {
             result.token = token;
-            this.updateData({ collectionName: tn, data: { "id": result.id, "token": token} });
+            this.updateData({ collectionName: tn, data: { "id": result.id, "token": token } });
         }
         return {
             success: result ? true : false,

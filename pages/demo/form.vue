@@ -1,28 +1,28 @@
 <template>
-	<section>
-		<sam-form :data="formData" />
-	</section>
+    <section>
+        <sam-form :data="formData" />
+    </section>
 </template>
 
 <script>
 import samForm from '~/components/form';
 export default {
-	components: {
-		samForm
-	},
-	data: () => ({
-		formData: {
-			isEdit: false,
-			gutter : 20,
-			colspan: 8,
-			itemList: [
-				{
-					"type": "String",
-					"name": "field_1",
-					"component": "sam-input",
-					"cptype": "text",
-					"default": '',
-					"label": '专业技术职务'
+    components: {
+        samForm
+    },
+    data: () => ({
+        formData: {
+            isEdit: false,
+            gutter: 20,
+            colspan: 8,
+            itemList: [
+                {
+                    "type": "String",
+                    "name": "field_1",
+                    "component": "sam-input",
+                    "cptype": "text",
+                    "default": '',
+                    "label": '专业技术职务'
                 },
                 {
                     "type": "Number",
@@ -37,8 +37,8 @@ export default {
                     "default": 0,
                     "label": '健康状况'
                 }
-			]
-		}
-	})
+            ]
+        }
+    })
 }
 </script>

@@ -67,17 +67,7 @@ export default {
 		overflow: hidden;
 		.main-content {
 			height: 100%;
-			//background-color: #eee;
 		}
-		/* .scrollbar{
-            height: 100%;
-            /deep/ .el-scrollbar__wrap {
-                overflow-x: hidden;
-            }
-            /deep/ .is-horizontal {
-                display: none;
-            }
-        } */
 	}
 }
 </style>

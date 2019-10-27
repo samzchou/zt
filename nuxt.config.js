@@ -43,7 +43,8 @@ module.exports = {
         '@/plugins/lodash',
         '@/plugins/global',
         '@/plugins/moment',
-        { src: '~/plugins/echarts', ssr: false },
+        { src: '@/plugins/code-editor', ssr: false },
+        { src: '@/plugins/echarts', ssr: false },
         { src: '@/plugins/cookies', ssr: false },
         { src: '@/plugins/storage', ssr: false }
     ],

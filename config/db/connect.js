@@ -27,6 +27,11 @@ connect.once('open', () => console.log('Mongo connection successed', myUri));
 //autoIncrement.initialize(connect);
 var Schema = mongoose.Schema;
 
+/*---------数据集合-----------*/
+var collsScheme = new Schema(dbServer.collections.colls, { collection: 'colls' });
+exports.colls = connect.model('colls', collsScheme);
+
+
 /*---------计数器-----------*/
 var counterScheme = new Schema(dbServer.collections.counters, { collection: 'counters' });
 exports.counters = connect.model('counters', counterScheme);

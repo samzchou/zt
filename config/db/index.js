@@ -36,6 +36,28 @@ module.exports = {
                 label: '描述'
             }
         },
+        /*----------数据表集合-----------*/
+        colls: {
+            id: {
+                type: "Number",
+                default: 0
+            },
+            name: {
+                type: "String",
+                default: '',
+                label: '表名称'
+            },
+            label: {
+                type: "String",
+                default: '',
+                label: '标签名称'
+            },
+            content: {
+                type: "Object",
+                default: '',
+                label: '数据内容JSON'
+            }
+        },
         /*----------权限数据-----------*/
         timeBlock: {
             id: {
