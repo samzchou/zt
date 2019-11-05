@@ -1,23 +1,47 @@
 // element相关样式重置
 .el-button [class*="my-icon-"] {
-  &+span {
-    margin-left: 5px;
-  }
+    &+span {
+        margin-left: 5px;
+    }
 }
 
-.el-form{
-    &.el-form--label-top{
-        .el-form-item{
-            &.half{
-                width:50%;
+.el-form {
+    &.el-form--label-top {
+        .el-form-item {
+            &.half {
+                width: 50%;
                 float: left;
             }
-            .el-form-item__label{
+
+            .el-form-item__label {
                 height: 25px;
                 line-height: 25px;
-                font-size:12px;
+                font-size: 12px;
+            }
+
+            .el-slider {
+                padding: 0 10px;
             }
         }
 
+    }
+}
+
+.el-dialog {
+    max-height: 80vh;
+
+    .el-dialog__header {
+        padding: 10px 20px;
+        background-color: #EEE;
+
+        .el-dialog__headerbtn {
+            top: 10px;
+        }
+    }
+
+    .el-dialog__body {
+        padding: 10px 20px 20px;
+        box-sizing: border-box;
+        max-height: calc(100% - 45px);
     }
 }

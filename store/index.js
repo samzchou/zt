@@ -1,32 +1,44 @@
 /* eslint-disable */
-const sysConfig = require('../config');
-import VueCookies from 'vue-cookies';
-//const navMenu = require('../config/navMenu');
-import navMenu from '@/config/navMenu';
+//import VueCookies from 'vue-cookies';
+const VueCookies = require('vue-cookies');
+const navMenu = require('../config/navMenu');
+
 export const state = () => ({
     user: null,
     sidebar: {
         opened: process.server ? true : !+VueCookies.get('sidebarStatus'),
         withoutAnimation: false
     },
-    menuAcitve:"",
-	navMenu:navMenu.menuList,
-	pageTitle:'主页',
+    menuAcitve: "",
+    navMenu: navMenu.menuList,
+    pageTitle: '主页',
     weekArray: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
-    workType: [{ label: "工作分类一", id: 1 }, { label: "工作分类二", id: 2 }],
-    workProject: [{ label: "项目一", id: 1 }, { label: "项目二", id: 2 }],
+    workType: [{
+        label: "工作分类一",
+        id: 1
+    }, {
+        label: "工作分类二",
+        id: 2
+    }],
+    workProject: [{
+        label: "项目一",
+        id: 1
+    }, {
+        label: "项目二",
+        id: 2
+    }],
     timeutilHeight: 20,
     locakMinutes: 15,
-    isEditTime:false,
+    isEditTime: false,
     editBlock: null,
     editIndex: '',
-	userTimeBlocks:[],
+    userTimeBlocks: [],
 })
 
 export const mutations = {
     UPDATE_MENUACTIVE(state, index) {
         state.menuAcitve = index;
-		//debugger
+        //debugger
         console.log('state.menuAcitve', state.menuAcitve);
     },
     UPDATE_USER(state, data) {
@@ -35,7 +47,7 @@ export const mutations = {
             this.app.$storage.set('user', state.user);
         }
     },
-	UPDATE_USERBLOCK(state, obj) {
+    UPDATE_USERBLOCK(state, obj) {
         state.userTimeBlocks = obj;
     },
     UPDATE_EDITBLOCK(state, obj) {

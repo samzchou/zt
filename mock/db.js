@@ -2,10 +2,10 @@
 /**
  * mongoDB数据处理后台接口
  */
+'use strict';
 const dbServer = require('../config/db/');
 const mongoDB = require('../config/db/connect');
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 const _ = require('lodash');
 const crypto = require('crypto');
 const tokenPrefix = 'samz.com';
@@ -22,16 +22,29 @@ const dbFun = {
         var keys = Object.keys(dbServer.collections);
         for (var i = 0; i < keys.length; i++) {
             let tn = keys[i];
-            let counters = await mongoDB.counters.findOne({ 'model': tn });
+            let counters = await mongoDB.counters.findOne({
+                'model': tn
+            });
             if (!colStrArr.includes(tn) && !counters) { // 如果不存则创建集合
                 let res = await mongoose.connection.db.createCollection(tn);
-                await mongoDB.counters.create({ 'model': tn, 'count': 0 });
+                await mongoDB.counters.create({
+                    'model': tn,
+                    'count': 0
+                });
             }
         }
         return {
             success: true
         };
     },
+    async getColls() {
+        let colls = dbServer.collections;
+        return {
+            success: true,
+            response: colls
+        }
+    },
+
     // 获取所有集合
     async getCollection() {
         let cols = await mongoose.connection.db.collections();
@@ -43,8 +56,6 @@ const dbFun = {
                 //let data = this.listData({ "collectionName": "colls" })
             }
         }
-        /* var keys = Object.keys(dbServer.collections);
-        console.log('getCollection', colStrArr); */
         return {
             success: true,
             response: colStrArr
@@ -61,7 +72,7 @@ const dbFun = {
             let res = await mongoose.connection.db.createCollection(params.name);
             if (res.namespace) {
                 // 计数器
-                await mongoDB.counters.findOneAndUpdate({ 'model': 'colls' }, { $inc: { count: 1 } });
+                //await mongoDB.counters.findOneAndUpdate({ 'model': 'colls' }, { $inc: { count: 1 } });
                 response = {
                     success: true,
                     response: 1
@@ -73,7 +84,15 @@ const dbFun = {
         }
     },
     async clearAll() {
-        await mongoDB['counters'].updateMany({ model: { $in: ['order', 'store', 'storeCalc', 'storeIn', 'storeLoss', 'finance', 'ingred'] } }, { $set: { "count": 0 } });
+        await mongoDB['counters'].updateMany({
+            model: {
+                $in: ['order', 'store', 'storeCalc', 'storeIn', 'storeLoss', 'finance', 'ingred']
+            }
+        }, {
+            $set: {
+                "count": 0
+            }
+        });
         await mongoDB.order.deleteMany({});
         await mongoDB.store.deleteMany({});
         await mongoDB.storeCalc.deleteMany({});
@@ -134,7 +153,10 @@ const dbFun = {
     async countData(params) {
         const tn = params.collectionName;
         let condition = params.data || {};
-        let total = await mongoDB[tn].find(condition).countDocuments();
+        let total = 0;
+        if (mongoDB[tn]) {
+            total = await mongoDB[tn].find(condition).countDocuments();
+        }
         return {
             success: true,
             response: total
@@ -177,7 +199,13 @@ const dbFun = {
         const data = params.data;
         let result = await mongoDB[tn].insertMany(data);
         //console.log(params, result);
-        let cc = await mongoDB.counters.findOneAndUpdate({ 'model': tn }, { $inc: { count: data.length } });
+        let cc = await mongoDB.counters.findOneAndUpdate({
+            'model': tn
+        }, {
+            $inc: {
+                count: data.length
+            }
+        });
         let response = {
             success: true,
             msgDesc: '数据保存成功'
@@ -224,13 +252,25 @@ const dbFun = {
         if (data.password) {
             data.password = this._setHash(data.password);
         }
-        // 计数器
-        let counters = await mongoDB.counters.findOne({ 'model': tn });
+        // 计数器，先判断是否存在数据，如果没有则创建一条数据
+        let counter = await mongoDB.counters.findOne({ "model": tn });
+        if (!counter) {
+            await mongoDB.counters.create({ "model": tn, count: 0 });
+        }
+        let counters = await mongoDB.counters.findOne({
+            'model': tn
+        });
         data.id = counters.count + 1;
         let result = await mongoDB[tn].create(data);
         //console.log('addData',result);
         if (result) {
-            await mongoDB.counters.findOneAndUpdate({ 'model': tn }, { $inc: { count: 1 } });
+            await mongoDB.counters.findOneAndUpdate({
+                'model': tn
+            }, {
+                $inc: {
+                    count: 1
+                }
+            });
         }
         let response = {
             success: true,
@@ -248,15 +288,18 @@ const dbFun = {
         const tn = params.collectionName;
         let data = params.data;
         for (let i = 0; i < data.length; i++) {
-            let condition = { id: data[i].id };
+            let condition = {
+                id: data[i].id
+            };
             let set = data[i];
             if (params.updateDate) {
                 set.updateDate = new Date().getTime();
             }
-            //console.log(condition, set);
-            //let result = await mongoDB[tn].updateOne(condition, set, $currentDate: { lastModified: true });//{upsert:true}
-            let result = await mongoDB[tn].updateOne(condition, { $set: set }, { upsert: true });
-            console.log('result', result);
+            let result = await mongoDB[tn].updateOne(condition, {
+                $set: set
+            }, {
+                upsert: true
+            });
         }
         let response = {
             success: true,
@@ -274,18 +317,26 @@ const dbFun = {
         if (data.password) {
             data.password = this._setHash(data.password);
         }
-        let condition = data.id ? { id: data.id } : params.condition;
+        let condition = data.id ? {
+            id: data.id
+        } : params.condition;
         if (params.updateDate) {
             data.updateDate = new Date().getTime();
         }
-        let update = { $set: data };
+        let update = {
+            $set: data
+        };
         let result = null;
         if (params.multi) { // 更新多个
-            result = await mongoDB[tn].updateMany(condition, update, { multi: true });
+            result = await mongoDB[tn].updateMany(condition, update, {
+                multi: true
+            });
         } else {
             let total = await mongoDB[tn].countDocuments(condition);
             if (total) {
-                result = await mongoDB[tn].updateOne(condition, update, { upsert: true });
+                result = await mongoDB[tn].updateOne(condition, update, {
+                    upsert: true
+                });
             }
         }
         let response = {
@@ -323,8 +374,8 @@ const dbFun = {
     async getData(params) {
         let tn = params.collectionName;
         let data = params.data;
-        let result = await mongoDB[tn].findOne(data);
 
+        let result = await mongoDB[tn].findOne(data);
         let response = {
             success: result ? true : false,
             msgDesc: result ? null : '没有可查询的数据',
@@ -337,7 +388,7 @@ const dbFun = {
         let tn = params.collectionName;
         let data = params.data;
         let result = await mongoDB[tn].deleteMany(data);
-        console.log(params, result)
+        //console.log(params, result)
         return {
             success: result['n'] == 0 ? false : true,
             msgDesc: result['n'] == 0 ? '删除数据失败' : null
@@ -346,10 +397,19 @@ const dbFun = {
     /*--------基础数据和元数据更新--------*/
     async updateSetting(params) {
         let tn = params.collectionName;
-        let data = params.data;
-        let opts = await mongoDB['setting'].findOne({ name: 'opts' });
+        let opts = await mongoDB['setting'].findOne({
+            name: 'opts'
+        });
         opts['content'][tn] = params.data;
-        let result = await mongoDB['setting'].updateOne({ name: 'opts' }, { $set: { 'content': opts['content'] } }, { upsert: true });
+        let result = await mongoDB['setting'].updateOne({
+            name: 'opts'
+        }, {
+            $set: {
+                'content': opts['content']
+            }
+        }, {
+            upsert: true
+        });
         return {
             success: result['n'] == 1 ? true : false,
             msgDesc: result['n'] == 1 ? null : '参数更新失败'
@@ -365,17 +425,23 @@ const dbFun = {
     async login(params) {
         let tn = params.collectionName;
         let data = params.data;
-        let content = { 'name': data.username }; // 要生成token的主题信息
+        let content = {
+            'name': data.username
+        }; // 要生成token的主题信息
         let token = jwt.sign(content, tokenPrefix, {
             expiresIn: 60 * 60 * 1 // 1小时过期
         });
         data.password = this._setHash(data.password);
-        console.log('password', data.password);
-
         let result = await mongoDB[tn].findOne(data);
         if (result) {
             result.token = token;
-            this.updateData({ collectionName: tn, data: { "id": result.id, "token": token } });
+            this.updateData({
+                collectionName: tn,
+                data: {
+                    "id": result.id,
+                    "token": token
+                }
+            });
         }
         return {
             success: result ? true : false,

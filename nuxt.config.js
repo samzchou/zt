@@ -14,8 +14,7 @@ module.exports = {
             { hid: 'description', name: 'description', content: sysConfig.description || '' }
         ],
         link: [
-            { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-            { rel: 'stylesheet', href: '/style/vendor.css' }
+            { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
         ]
     },
     /*
@@ -48,15 +47,6 @@ module.exports = {
         { src: '@/plugins/cookies', ssr: false },
         { src: '@/plugins/storage', ssr: false }
     ],
-    /*
-     ** Nuxt.js dev-modules
-     */
-    /*
-    buildModules: [
-      // Doc: https://github.com/nuxt-community/eslint-module
-      '@nuxtjs/eslint-module'
-    ],
-    */
     /*
      ** Nuxt.js modules
      */

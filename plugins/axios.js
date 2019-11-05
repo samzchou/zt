@@ -12,26 +12,24 @@ function getRoutePath() {
 // sam + 2019-05-31 =>设置返回错误无需重复弹出提示
 var errorhandler = false;
 
-export default function ({ $axios, redirect, store, route }) {
+export default function({ $axios, redirect, store, route }) {
     $axios.onRequest(config => {
         // mock开头走本地模拟数据
         if (config.url.indexOf('mock') === 0) {
-            let host = `localhost:${process.env.PORT || 5211}`;
+            let host = `localhost:${process.env.PORT || 80}`;
             if (process.browser) {
                 host = location.host;
             }
             config.baseURL = `http://${host}/`;
         }
-
         // Content-Type
         config.headers['Content-Type'] = 'text/plain; charset=UTF-8';
         // 注入token
         if (config.data && config.data.token === false) {
             delete config.data.token;
         } else {
-            config.timeout = 1000 * 60 * 3; // sam + 2019-03-21
+            config.timeout = 1000 * 60 * 3;
             let token = process.server ? getCookie(config.headers.common.cookie, 'token') : VueCookies.get('token');
-
             let requireData = { token: token };
             if (store.state.user && store.state.user.services) {
                 let routePath = process.server ? route.path.slice(1) : getRoutePath();
@@ -40,7 +38,6 @@ export default function ({ $axios, redirect, store, route }) {
                     requireData.serviceId = '' + serviceId;
                 }
             }
-
             config.data = Object.assign(requireData, config.data);
         }
     });
@@ -49,7 +46,6 @@ export default function ({ $axios, redirect, store, route }) {
         let resp = config.data;
         // 后端响应数据处理
         if (resp.success === false && !config.config.nothold) {
-            // sam + nothold:true 请求发起时附带参数, 返回原始结果
             config.data = undefined;
         } else if (resp.success === true && !config.config.nothold) {
             config.data = resp.response || '';

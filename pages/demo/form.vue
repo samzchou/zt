@@ -1,5 +1,5 @@
 <template>
-    <section>
+    <section style="padding:25px">
         <sam-form :data="formData" />
     </section>
 </template>
@@ -15,6 +15,8 @@ export default {
             isEdit: false,
             gutter: 20,
             colspan: 8,
+            size: "mini",
+            isEdit: true,
             itemList: [
                 {
                     "type": "String",
@@ -36,6 +38,23 @@ export default {
                     "required": true,
                     "default": 0,
                     "label": '健康状况'
+                },
+                {
+                    "type": "String",
+                    "name": "field_3",
+                    "component": "sam-input",
+                    "cptype": "text",
+                    "default": '',
+                    "label": '专业职称'
+                },
+                {
+                    "type": "String",
+                    "name": "field_4",
+                    "component": "sam-input",
+                    "cptype": "textarea",
+                    "default": '',
+                    "label": '荣誉',
+                    "colspan": 16
                 }
             ]
         }

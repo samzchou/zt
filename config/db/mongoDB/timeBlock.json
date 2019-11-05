@@ -1,0 +1,159 @@
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dae7682a9855951b0f9a6a9"),
+	"content" : [
+		{
+			"date" : 1571587200000,
+			"list" : [
+				{
+					"index" : NumberInt(0),
+					"colIndex" : NumberInt(0),
+					"rowIndex" : NumberInt(46),
+					"rect" : {
+						"top" : NumberInt(920),
+						"height" : NumberInt(200)
+					},
+					"startTime" : "11:30",
+					"endTime" : "14:00",
+					"allTimes" : "02:30",
+					"type" : NumberInt(1),
+					"project" : NumberInt(2)
+				},
+				{
+					"index" : NumberInt(1),
+					"colIndex" : NumberInt(0),
+					"rowIndex" : NumberInt(59),
+					"rect" : {
+						"top" : NumberInt(1180),
+						"height" : NumberInt(120)
+					},
+					"startTime" : "14:45",
+					"endTime" : "16:15",
+					"allTimes" : "01:30",
+					"type" : NumberInt(2),
+					"project" : NumberInt(2)
+				},
+				{
+					"index" : NumberInt(2),
+					"colIndex" : NumberInt(0),
+					"rowIndex" : NumberInt(32),
+					"rect" : {
+						"top" : NumberInt(640),
+						"height" : NumberInt(200)
+					},
+					"startTime" : "08:00",
+					"endTime" : "10:30",
+					"allTimes" : "02:30",
+					"type" : NumberInt(2),
+					"project" : NumberInt(2)
+				}
+			]
+		},
+		{
+			"date" : 1571673600000,
+			"list" : [
+				{
+					"index" : NumberInt(0),
+					"colIndex" : NumberInt(1),
+					"rowIndex" : NumberInt(42),
+					"rect" : {
+						"top" : NumberInt(840),
+						"height" : NumberInt(320)
+					},
+					"startTime" : "10:30",
+					"endTime" : "14:30",
+					"allTimes" : "04:00",
+					"type" : NumberInt(1),
+					"project" : NumberInt(1),
+					"desc" : "AAAAA"
+				}
+			]
+		},
+		{
+			"date" : 1571760000000,
+			"list" : [
+				{
+					"index" : NumberInt(0),
+					"colIndex" : NumberInt(2),
+					"rowIndex" : NumberInt(41),
+					"rect" : {
+						"top" : NumberInt(820),
+						"height" : NumberInt(420)
+					},
+					"startTime" : "10:15",
+					"endTime" : "15:30",
+					"allTimes" : "05:15",
+					"type" : NumberInt(2),
+					"project" : NumberInt(2),
+					"desc" : "FFFFFFF"
+				}
+			]
+		},
+		{
+			"date" : 1571846400000,
+			"list" : [
+				{
+					"index" : NumberInt(0),
+					"colIndex" : NumberInt(3),
+					"rowIndex" : NumberInt(35),
+					"rect" : {
+						"top" : NumberInt(700),
+						"height" : NumberInt(260)
+					},
+					"startTime" : "08:45",
+					"endTime" : "12:00",
+					"allTimes" : "03:15",
+					"type" : NumberInt(1),
+					"project" : NumberInt(1)
+				}
+			]
+		},
+		{
+			"date" : 1571932800000,
+			"list" : [
+				{
+					"index" : NumberInt(0),
+					"colIndex" : NumberInt(4),
+					"rowIndex" : NumberInt(39),
+					"rect" : {
+						"top" : NumberInt(780),
+						"height" : NumberInt(220)
+					},
+					"startTime" : "09:45",
+					"endTime" : "12:30",
+					"allTimes" : "02:45",
+					"type" : NumberInt(1),
+					"project" : NumberInt(1),
+					"desc" : "GGGG"
+				},
+				{
+					"index" : NumberInt(1),
+					"colIndex" : NumberInt(4),
+					"rowIndex" : NumberInt(52),
+					"rect" : {
+						"top" : NumberInt(1040),
+						"height" : NumberInt(160)
+					},
+					"startTime" : "13:00",
+					"endTime" : "15:00",
+					"allTimes" : "02:00",
+					"type" : NumberInt(2),
+					"project" : NumberInt(2),
+					"desc" : "BBBB"
+				}
+			]
+		},
+		{
+			"date" : 1572019200000,
+			"list" : [ ]
+		},
+		{
+			"date" : 1572105600000,
+			"list" : [ ]
+		}
+	],
+	"enddate" : 1572191999999,
+	"id" : NumberInt(1),
+	"startdate" : 1571587200000,
+	"userId" : NumberInt(1)
+},

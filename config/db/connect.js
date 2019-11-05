@@ -1,7 +1,8 @@
 /* eslint-disable */
+'use strict';
 var dbServer = require('./index');
-//import mongoose from 'mongoose';
 const mongoose = require('mongoose');
+
 // 连接数据库
 var myUri = 'mongodb://' + dbServer.dbConect.dataUrl + ':' + dbServer.dbConect.dataPort + '/' + dbServer.dbConect.dataName;
 if (dbServer.dbConect.username && dbServer.dbConect.password) {
@@ -22,27 +23,17 @@ const connect = mongoose.connection;
 connect.once('error', (err) => console.log('Mongo connection error', myUri, err));
 connect.once('open', () => console.log('Mongo connection successed', myUri));
 
-/**cnpm install mongoose@5.2.8 --save 需要此版本 否则会有警告*/
+/**cnpm install mongoose@5.2.8 --save 需要此版本以上 否则会有警告*/
 //const autoIncrement = require('mongoose-auto-increment');
 //autoIncrement.initialize(connect);
 var Schema = mongoose.Schema;
 
-/*---------数据集合-----------*/
-var collsScheme = new Schema(dbServer.collections.colls, { collection: 'colls' });
-exports.colls = connect.model('colls', collsScheme);
-
-
-/*---------计数器-----------*/
-var counterScheme = new Schema(dbServer.collections.counters, { collection: 'counters' });
-exports.counters = connect.model('counters', counterScheme);
-
-/*---------用户-----------*/
-var userScheme = new Schema(dbServer.collections.user, { collection: 'user' });
-exports.user = connect.model('user', userScheme);
-
-/*---------时钟管理-----------*/
-var timeBlockScheme = new Schema(dbServer.collections.timeBlock, { collection: 'timeBlock' });
-exports.timeBlock = connect.model('timeBlock', timeBlockScheme);
-
-
+// 循环实例化集合
+var collections = Object.keys(dbServer.collections);
+collections.forEach(item => {
+    var colScheme = new Schema(dbServer.collections[item], {
+        "collection": item
+    });
+    exports[item] = connect.model(item, colScheme);
+});
 exports.connect = connect;

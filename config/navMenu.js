@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
     "menuList": [
         {
             "label": "个人信息管理",

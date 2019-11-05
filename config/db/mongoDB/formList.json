@@ -1,0 +1,187 @@
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dbceea619ccb730cc6841af"),
+	"content" : {
+		"title" : "表单测试（编辑状态下禁用组件）",
+		"itemList" : [
+			{
+				"name" : "username",
+				"type" : "String",
+				"component" : "sam-input",
+				"cptype" : "text",
+				"required" : true,
+				"default" : "",
+				"label" : "用户名",
+				"table" : "user",
+				"value" : "",
+				"tableName" : "user-username",
+				"key" : "d021371b-f857-4ca6-b64a-22f3050be532-user",
+				"rules" : [
+					{
+						"required" : true,
+						"message" : "必填项",
+						"trigger" : "blur"
+					},
+					{
+						"min" : NumberInt(3),
+						"max" : NumberInt(10),
+						"type" : "string",
+						"message" : "长度在3~10个单元",
+						"trigger" : "blur"
+					}
+				]
+			},
+			{
+				"name" : "password",
+				"type" : "String",
+				"component" : "sam-input",
+				"cptype" : "password",
+				"required" : true,
+				"default" : "123456",
+				"label" : "密码",
+				"table" : "user",
+				"value" : "",
+				"tableName" : "user-password",
+				"key" : "4da5fa12-94a1-4a6a-9b43-40f3b16519ab-user"
+			},
+			{
+				"name" : "name",
+				"type" : "String",
+				"component" : "sam-input",
+				"cptype" : "text",
+				"required" : true,
+				"default" : "",
+				"label" : "姓名",
+				"table" : "user",
+				"value" : "",
+				"tableName" : "user-name",
+				"key" : "e2d3d1fd-370b-4bbc-ae27-c19431372f51-user"
+			},
+			{
+				"name" : "sex",
+				"type" : "Number",
+				"component" : "sam-radio",
+				"options" : [
+					{
+						"label" : "男",
+						"id" : NumberInt(1)
+					},
+					{
+						"label" : "女",
+						"id" : NumberInt(2)
+					}
+				],
+				"default" : NumberInt(1),
+				"label" : "性别",
+				"table" : "user",
+				"value" : "",
+				"tableName" : "user-sex",
+				"key" : "336bf6ad-5852-430c-8086-d0dd594a04a2-user"
+			}
+		],
+		"id" : NumberInt(2),
+		"inline" : true,
+		"colspan" : NumberInt(3),
+		"gutter" : NumberInt(25),
+		"size" : "small"
+	},
+	"create_date" : 1572662924004,
+	"create_eid" : NumberInt(1),
+	"form_name" : "表单测试（编辑状态下禁用组件）",
+	"id" : NumberInt(2)
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dbd051519ccb730cc6841b0"),
+	"content" : {
+		"title" : "表单测试（编辑状态下禁用组件）",
+		"gutter" : NumberInt(35),
+		"size" : "small",
+		"itemList" : [
+			{
+				"name" : "username",
+				"type" : "String",
+				"component" : "sam-input",
+				"cptype" : "text",
+				"required" : true,
+				"default" : "",
+				"label" : "用户名",
+				"table" : "user",
+				"value" : "",
+				"tableName" : "user-username",
+				"key" : "19178537-8c20-41b9-bb14-4ff049259b24-user"
+			},
+			{
+				"name" : "name",
+				"type" : "String",
+				"component" : "sam-input",
+				"cptype" : "text",
+				"required" : true,
+				"default" : "",
+				"label" : "姓名",
+				"table" : "user",
+				"value" : "",
+				"tableName" : "user-name",
+				"key" : "7b57e806-038a-4dd3-9437-d0c4bda51359-user"
+			}
+		],
+		"inline" : true,
+		"colspan" : NumberInt(3)
+	},
+	"create_date" : 1572662924004,
+	"create_eid" : NumberInt(1),
+	"form_name" : "表单测试（编辑状态下禁用组件）",
+	"id" : NumberInt(3)
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dbf5fc47e0dd99774b296b4"),
+	"collInfo" : "",
+	"content" : {
+		"title" : "组织机构",
+		"gutter" : NumberInt(25),
+		"size" : "small",
+		"itemList" : [
+			{
+				"name" : "dept_parentid",
+				"label" : "上级部门",
+				"type" : "Number",
+				"component" : "sam-select",
+				"optionsUrl" : "department",
+				"level" : NumberInt(0),
+				"default" : NumberInt(0),
+				"table" : "department",
+				"value" : "",
+				"tableName" : "department-dept_parentid",
+				"key" : "e184d156-c4b4-4b96-ad42-31cdd251d896-department"
+			},
+			{
+				"name" : "dept_name",
+				"type" : "String",
+				"component" : "sam-input",
+				"cptype" : "text",
+				"required" : true,
+				"default" : "",
+				"label" : "部门名称",
+				"table" : "department",
+				"value" : "",
+				"tableName" : "department-dept_name",
+				"key" : "ca8f4cab-1509-4477-8a4d-ea1f2285a5ef-department",
+				"rules" : [
+					{
+						"required" : true,
+						"message" : "必填项",
+						"trigger" : "blur"
+					}
+				]
+			}
+		],
+		"inline" : true,
+		"colspan" : NumberInt(2),
+		"form_name" : "department"
+	},
+	"create_date" : 1572769976287,
+	"create_eid" : NumberInt(1),
+	"form_name" : "组织机构",
+	"id" : NumberInt(4)
+},

@@ -1,7 +1,5 @@
 <template>
-    <el-select :size="size" v-model="value" placeholder="请选择">
-        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-    </el-select>
+    <el-date-picker :size="size" v-model="value" type="date" placeholder="选择日期" @change="changeValue" />
 </template>
 <script>
 export default {
@@ -23,7 +21,6 @@ export default {
     },
     data: () => ({
         itemData: {},
-        options: [],
         value: ''
     }),
     methods: {

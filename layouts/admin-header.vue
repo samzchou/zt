@@ -1,11 +1,11 @@
 <template>
     <section class="header-container">
         <div class="left">
-            <i :class="sidebar.opened?'el-icon-s-fold':'el-icon-s-unfold'" :title="sidebar.opened?'收起导航':'展开导航'" @click="TOGGLE_SIDEBAR"
-            />
+            <i :class="sidebar.opened?'el-icon-s-fold':'el-icon-s-unfold'" :title="sidebar.opened?'收起导航':'展开导航'" @click="TOGGLE_SIDEBAR" />
             <div class="page-title">
                 <el-breadcrumb separator-class="el-icon-arrow-right">
                     <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+                    <el-breadcrumb-item>后台管理</el-breadcrumb-item>
                     <el-breadcrumb-item v-for="(page,index) in pageTitle" :key="index">{{page.label}}</el-breadcrumb-item>
                 </el-breadcrumb>
             </div>
@@ -30,17 +30,17 @@ export default {
         pageTitle: [],
     }),
     computed: {
-        ...mapState(['sidebar', 'navMenu']),
+        ...mapState('admin', ['sidebar', 'navMenu']),
     },
     methods: {
-        ...mapMutations(['TOGGLE_SIDEBAR', 'UPDATE_USER', 'UPDATE_MENUACTIVE']),
+        ...mapMutations('admin', ['TOGGLE_SIDEBAR', 'UPDATE_MENUACTIVE']),
         setRouter() {
-            //console.log('this.$route.path',this.$route.path);
+            console.log('this.$route.path', this.$route.path);
             let actIndex = '';
             this.pageTitle = [];
             let pathArr = this.$route.path.split('/');
             if (!pathArr[0]) {
-                pathArr.splice(0, 1);
+                pathArr.splice(0, 2);
             }
             let pIndex = _.findIndex(this.navMenu, { "name": pathArr[0] });
             if (!!~pIndex) {
@@ -64,7 +64,6 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                debugger
                 this.UPDATE_USER(null);
                 this.$cookies.set('token', '');
                 this.$router.push('/login');
@@ -80,35 +79,35 @@ export default {
 
 <style lang="scss" scoped>
 .header-container {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	height: 100%;
-	.left {
-		display: flex;
-		align-items: center;
-		> i {
-			font-size: 24px;
-			color: #51627f;
-			cursor: pointer;
-			margin-right: 15px;
-		}
-		/deep/ .el-breadcrumb {
-			font-size: 16px;
-		}
-	}
-	.right {
-		display: flex;
-		align-items: center;
-		.avatar {
-			width: 30px;
-			height: 30px;
-			background-repeat: no-repeat;
-			background-position: center;
-			border-radius: 50%;
-			background-size: cover;
-			margin-right: 10px;
-		}
-	}
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    .left {
+        display: flex;
+        align-items: center;
+        > i {
+            font-size: 24px;
+            color: #51627f;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+        /deep/ .el-breadcrumb {
+            font-size: 16px;
+        }
+    }
+    .right {
+        display: flex;
+        align-items: center;
+        .avatar {
+            width: 30px;
+            height: 30px;
+            background-repeat: no-repeat;
+            background-position: center;
+            border-radius: 50%;
+            background-size: cover;
+            margin-right: 10px;
+        }
+    }
 }
 </style>

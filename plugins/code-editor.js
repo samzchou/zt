@@ -2,6 +2,8 @@
 import Vue from 'vue'
 import VueCodemirror from 'vue-codemirror'
 
+import 'codemirror/lib/codemirror.css'
+/* 
 // language
 import 'codemirror/mode/vue/vue.js'
 
@@ -36,7 +38,7 @@ import 'codemirror/addon/fold/foldcode.js'
 import 'codemirror/addon/fold/foldgutter.js'
 import 'codemirror/addon/fold/indent-fold.js'
 import 'codemirror/addon/fold/markdown-fold.js'
-import 'codemirror/addon/fold/xml-fold.js'
+import 'codemirror/addon/fold/xml-fold.js' */
 
 // more...
 

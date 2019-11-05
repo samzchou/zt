@@ -36,15 +36,31 @@ export default {
         satrtDate.setMinutes(min + minutes);
         return satrtDate;
     },
-	getAllTimes(list) {
-		let allTimes = 0;
-		list.forEach(item => {
-			let startMin = this.changeMyTimeToMin(item.startTime); //obj.startTime.split(':')[0];
-			let endMin = this.changeMyTimeToMin(item.endTime);
-			allTimes += (endMin - startMin);
-		});
-		return allTimes;
-	},
+    getAllTimes(list) {
+        let allTimes = 0;
+        list.forEach(item => {
+            let startMin = this.changeMyTimeToMin(item.startTime); //obj.startTime.split(':')[0];
+            let endMin = this.changeMyTimeToMin(item.endTime);
+            allTimes += (endMin - startMin);
+        });
+        return allTimes;
+    },
+    // 判断是否为JSON字符串
+    isJSON(str) {
+        if (typeof str == 'string') {
+            try {
+                var obj = JSON.parse(str);
+                if (typeof obj == 'object' && obj) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (e) {
+                console.log('error：' + str + '!!!' + e);
+                return false;
+            }
+        }
+    },
     // 检测两个DOM碰撞情况，created By sam
     hit(source, targets) {
         const sourceRect = source.getBoundingClientRect();
@@ -122,14 +138,14 @@ export default {
     },
     // 获取当月最后一天日期
     getLastDay(year, month) {
-        var new_year = year;    //取当前的年份
-        var new_month = month++;//取下一个月的第一天，方便计算（最后一天不固定）
+        var new_year = year; //取当前的年份
+        var new_month = month++; //取下一个月的第一天，方便计算（最后一天不固定）
         if (month > 12) {
-            new_month -= 12;        //月份减
-            new_year++;            //年份增
+            new_month -= 12; //月份减
+            new_year++; //年份增
         }
-        var new_date = new Date(new_year, new_month, 1);                //取当年当月中的第一天
-        return (new Date(new_date.getTime() - 1000 * 60 * 60 * 24)).getDate();//获取当月最后一天日期
+        var new_date = new Date(new_year, new_month, 1); //取当年当月中的第一天
+        return (new Date(new_date.getTime() - 1000 * 60 * 60 * 24)).getDate(); //获取当月最后一天日期
     },
 
     // 比较两个Object差异,返回一个新的对象，created By sam

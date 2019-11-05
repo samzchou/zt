@@ -63,7 +63,6 @@ export default {
                         }
                     }).then(result=>{
                         this.isLogin = false;
-                        //console.log('result', result);
                         if(result){
                             this.$store.commit('UPDATE_USER', result);
                             this.$cookies.set('token', result.token, '1m', '/');
