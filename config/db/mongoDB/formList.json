@@ -1,141 +1,6 @@
 {
 	"__v" : NumberInt(0),
-	"_id" : ObjectId("5dbceea619ccb730cc6841af"),
-	"content" : {
-		"title" : "表单测试（编辑状态下禁用组件）",
-		"itemList" : [
-			{
-				"name" : "username",
-				"type" : "String",
-				"component" : "sam-input",
-				"cptype" : "text",
-				"required" : true,
-				"default" : "",
-				"label" : "用户名",
-				"table" : "user",
-				"value" : "",
-				"tableName" : "user-username",
-				"key" : "d021371b-f857-4ca6-b64a-22f3050be532-user",
-				"rules" : [
-					{
-						"required" : true,
-						"message" : "必填项",
-						"trigger" : "blur"
-					},
-					{
-						"min" : NumberInt(3),
-						"max" : NumberInt(10),
-						"type" : "string",
-						"message" : "长度在3~10个单元",
-						"trigger" : "blur"
-					}
-				]
-			},
-			{
-				"name" : "password",
-				"type" : "String",
-				"component" : "sam-input",
-				"cptype" : "password",
-				"required" : true,
-				"default" : "123456",
-				"label" : "密码",
-				"table" : "user",
-				"value" : "",
-				"tableName" : "user-password",
-				"key" : "4da5fa12-94a1-4a6a-9b43-40f3b16519ab-user"
-			},
-			{
-				"name" : "name",
-				"type" : "String",
-				"component" : "sam-input",
-				"cptype" : "text",
-				"required" : true,
-				"default" : "",
-				"label" : "姓名",
-				"table" : "user",
-				"value" : "",
-				"tableName" : "user-name",
-				"key" : "e2d3d1fd-370b-4bbc-ae27-c19431372f51-user"
-			},
-			{
-				"name" : "sex",
-				"type" : "Number",
-				"component" : "sam-radio",
-				"options" : [
-					{
-						"label" : "男",
-						"id" : NumberInt(1)
-					},
-					{
-						"label" : "女",
-						"id" : NumberInt(2)
-					}
-				],
-				"default" : NumberInt(1),
-				"label" : "性别",
-				"table" : "user",
-				"value" : "",
-				"tableName" : "user-sex",
-				"key" : "336bf6ad-5852-430c-8086-d0dd594a04a2-user"
-			}
-		],
-		"id" : NumberInt(2),
-		"inline" : true,
-		"colspan" : NumberInt(3),
-		"gutter" : NumberInt(25),
-		"size" : "small"
-	},
-	"create_date" : 1572662924004,
-	"create_eid" : NumberInt(1),
-	"form_name" : "表单测试（编辑状态下禁用组件）",
-	"id" : NumberInt(2)
-},
-{
-	"__v" : NumberInt(0),
-	"_id" : ObjectId("5dbd051519ccb730cc6841b0"),
-	"content" : {
-		"title" : "表单测试（编辑状态下禁用组件）",
-		"gutter" : NumberInt(35),
-		"size" : "small",
-		"itemList" : [
-			{
-				"name" : "username",
-				"type" : "String",
-				"component" : "sam-input",
-				"cptype" : "text",
-				"required" : true,
-				"default" : "",
-				"label" : "用户名",
-				"table" : "user",
-				"value" : "",
-				"tableName" : "user-username",
-				"key" : "19178537-8c20-41b9-bb14-4ff049259b24-user"
-			},
-			{
-				"name" : "name",
-				"type" : "String",
-				"component" : "sam-input",
-				"cptype" : "text",
-				"required" : true,
-				"default" : "",
-				"label" : "姓名",
-				"table" : "user",
-				"value" : "",
-				"tableName" : "user-name",
-				"key" : "7b57e806-038a-4dd3-9437-d0c4bda51359-user"
-			}
-		],
-		"inline" : true,
-		"colspan" : NumberInt(3)
-	},
-	"create_date" : 1572662924004,
-	"create_eid" : NumberInt(1),
-	"form_name" : "表单测试（编辑状态下禁用组件）",
-	"id" : NumberInt(3)
-},
-{
-	"__v" : NumberInt(0),
-	"_id" : ObjectId("5dbf5fc47e0dd99774b296b4"),
+	"_id" : ObjectId("5dc01310aede3161a425cad6"),
 	"collInfo" : "",
 	"content" : {
 		"title" : "组织机构",
@@ -147,13 +12,19 @@
 				"label" : "上级部门",
 				"type" : "Number",
 				"component" : "sam-select",
-				"optionsUrl" : "department",
-				"level" : NumberInt(0),
+				"optionsUrl" : {
+					"table" : "department",
+					"params" : {
+						"dept_parentid" : NumberInt(0)
+					},
+					"label" : "dept_name",
+					"value" : "id"
+				},
 				"default" : NumberInt(0),
 				"table" : "department",
 				"value" : "",
 				"tableName" : "department-dept_parentid",
-				"key" : "e184d156-c4b4-4b96-ad42-31cdd251d896-department"
+				"key" : "654c1952-7dff-450e-a9f0-0905127dae95-department"
 			},
 			{
 				"name" : "dept_name",
@@ -166,7 +37,7 @@
 				"table" : "department",
 				"value" : "",
 				"tableName" : "department-dept_name",
-				"key" : "ca8f4cab-1509-4477-8a4d-ea1f2285a5ef-department",
+				"key" : "0e670b0c-15fa-41e8-bc9d-54630673f948-department",
 				"rules" : [
 					{
 						"required" : true,
@@ -180,8 +51,169 @@
 		"colspan" : NumberInt(2),
 		"form_name" : "department"
 	},
-	"create_date" : 1572769976287,
+	"create_date" : 1572838359937,
 	"create_eid" : NumberInt(1),
 	"form_name" : "组织机构",
-	"id" : NumberInt(4)
+	"id" : NumberInt(8)
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dc050e4a4dd3839d4987d75"),
+	"collInfo" : "",
+	"content" : {
+		"title" : "员工信息录入",
+		"gutter" : NumberInt(20),
+		"size" : "small",
+		"itemList" : [
+			{
+				"name" : "e_name",
+				"label" : "员工姓名",
+				"type" : "String",
+				"required" : true,
+				"component" : "sam-input",
+				"cptype" : "text",
+				"default" : "",
+				"table" : "employee",
+				"value" : "",
+				"tableName" : "employee-e_name",
+				"key" : "90804df6-03c8-4141-859b-8a8fb1d5fe28-emplo9ee",
+				"rules" : [
+					{
+						"required" : true,
+						"message" : "必填项",
+						"trigger" : "blur"
+					}
+				],
+				"placeholder" : "6633"
+			},
+			{
+				"name" : "e_sex",
+				"label" : "性别",
+				"type" : "Number",
+				"required" : true,
+				"component" : "sam-select",
+				"options" : [
+					{
+						"label" : "男",
+						"value" : NumberInt(1)
+					},
+					{
+						"label" : "女",
+						"value" : NumberInt(2)
+					}
+				],
+				"default" : NumberInt(1),
+				"table" : "employee",
+				"value" : "",
+				"tableName" : "employee-e_sex",
+				"key" : "fa1f7c0a-cef7-424f-bd25-fa749f74550a-emplo8ee",
+				"rules" : [
+					{
+						"required" : true,
+						"message" : "必填项",
+						"trigger" : "change"
+					}
+				]
+			},
+			{
+				"name" : "e_birth",
+				"label" : "出生日期",
+				"type" : "Number",
+				"required" : true,
+				"component" : "sam-date",
+				"cptype" : "date",
+				"valueFormat" : "yyyy-MM-dd",
+				"default" : "",
+				"table" : "employee",
+				"value" : "",
+				"tableName" : "employee-e_birth",
+				"key" : "f508e6ef-7e11-4a98-a297-72c5b1e68fe9-emplo9ee",
+				"rules" : [
+					{
+						"required" : true,
+						"message" : "必填项",
+						"trigger" : "change"
+					}
+				]
+			},
+			{
+				"name" : "e_age",
+				"label" : "政治面貌",
+				"type" : "Number",
+				"required" : true,
+				"component" : "sam-select",
+				"options" : [
+					{
+						"label" : "群众",
+						"value" : NumberInt(1)
+					},
+					{
+						"label" : "中共团员",
+						"value" : NumberInt(2)
+					},
+					{
+						"label" : "中共党员",
+						"value" : NumberInt(3)
+					},
+					{
+						"label" : "其他党派成员",
+						"value" : NumberInt(4)
+					}
+				],
+				"default" : NumberInt(0),
+				"table" : "employee",
+				"value" : "",
+				"tableName" : "employee-e_age",
+				"key" : "2251e9cb-6c95-4320-b90c-c0ae9db41186-emploaee",
+				"rules" : [
+					{
+						"required" : true,
+						"message" : "必填项",
+						"trigger" : "change"
+					}
+				]
+			},
+			{
+				"name" : "e_marital_status",
+				"label" : "婚姻状况",
+				"type" : "Number",
+				"required" : true,
+				"component" : "sam-select",
+				"options" : [
+					{
+						"label" : "未婚",
+						"value" : NumberInt(1)
+					},
+					{
+						"label" : "已婚",
+						"value" : NumberInt(2)
+					},
+					{
+						"label" : "离异",
+						"value" : NumberInt(3)
+					}
+				],
+				"default" : NumberInt(1),
+				"table" : "employee",
+				"value" : "",
+				"tableName" : "employee-e_marital_status",
+				"key" : "f2d45149-6aa9-4ea8-abc9-dcb9043867cb-emploaee",
+				"rules" : [
+					{
+						"required" : true,
+						"message" : "必填项",
+						"trigger" : "change"
+					}
+				]
+			}
+		],
+		"inline" : true,
+		"colspan" : NumberInt(4),
+		"position" : "top",
+		"hideTitle" : true
+	},
+	"create_date" : 1572883406723,
+	"create_eid" : NumberInt(1),
+	"form_name" : "员工信息录入",
+	"id" : NumberInt(9)
 },

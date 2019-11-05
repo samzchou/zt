@@ -1,0 +1,32 @@
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dc00fd7aede3161a425cad4"),
+	"collInfo" : "",
+	"dept_name" : "总经办",
+	"dept_parentid" : NumberInt(0),
+	"id" : NumberInt(1)
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dc013d0aede3161a425cad7"),
+	"collInfo" : "",
+	"dept_name" : "设计部",
+	"dept_parentid" : NumberInt(0),
+	"id" : NumberInt(2)
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dc014cbaede3161a425cad9"),
+	"collInfo" : "",
+	"dept_name" : "市场部",
+	"dept_parentid" : NumberInt(0),
+	"id" : NumberInt(3)
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dc01516aede3161a425cada"),
+	"collInfo" : "",
+	"dept_name" : "售前",
+	"dept_parentid" : NumberInt(3),
+	"id" : NumberInt(4)
+},

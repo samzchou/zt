@@ -1,0 +1,62 @@
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dc0d87e82d3bb681483669c"),
+	"collInfo" : "",
+	"content" : {
+		"title" : "机构部门录入",
+		"content" : {
+			"title" : "组织机构",
+			"gutter" : NumberInt(25),
+			"size" : "small",
+			"itemList" : [
+				{
+					"name" : "dept_parentid",
+					"label" : "上级部门",
+					"type" : "Number",
+					"component" : "sam-select",
+					"optionsUrl" : {
+						"table" : "department",
+						"params" : {
+							"dept_parentid" : NumberInt(0)
+						},
+						"label" : "dept_name",
+						"value" : "id"
+					},
+					"default" : NumberInt(0),
+					"table" : "department",
+					"value" : "",
+					"tableName" : "department-dept_parentid",
+					"key" : "654c1952-7dff-450e-a9f0-0905127dae95-department"
+				},
+				{
+					"name" : "dept_name",
+					"type" : "String",
+					"component" : "sam-input",
+					"cptype" : "text",
+					"required" : true,
+					"default" : "",
+					"label" : "部门名称",
+					"table" : "department",
+					"value" : "",
+					"tableName" : "department-dept_name",
+					"key" : "0e670b0c-15fa-41e8-bc9d-54630673f948-department",
+					"rules" : [
+						{
+							"required" : true,
+							"message" : "必填项",
+							"trigger" : "blur"
+						}
+					]
+				}
+			],
+			"inline" : true,
+			"colspan" : NumberInt(2),
+			"form_name" : "department"
+		},
+		"id" : NumberInt(3)
+	},
+	"create_date" : 1572885125606,
+	"create_eid" : NumberInt(1),
+	"id" : NumberInt(3),
+	"page_name" : "机构部门录入"
+},
