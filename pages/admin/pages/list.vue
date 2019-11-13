@@ -16,7 +16,8 @@
                         <span>{{scope.$index+( query.page - 1) * query.size + 1}} </span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="form_name" label="页面名称" />
+                <el-table-column prop="id" label="页面ID" width="80" />
+                <el-table-column prop="page_name" label="页面名称" />
                 <el-table-column prop="content" label="数据结构" width="450">
                     <template slot-scope="scope">
                         <span>{{getCode(scope.row.content)}}</span>
@@ -115,8 +116,17 @@ export default {
             this.CLEAR_PAGES(true);
             window.location.href = '/admin/pages/addNew';
         },
-        editItem(item) {
+        async editItem(item) {
+
             item.content.id = item.id;
+            let condition = {
+                type: 'getData',
+                collectionName: 'formList',
+                data: { id: item.content.formid }
+            };
+            let res = await this.$axios.$post('mock/db', { data: condition });
+            item.content.content = res.content;
+
             this.UPDATE_PAGES(item.content);
             window.location.href = '/admin/pages/addNew';
         },

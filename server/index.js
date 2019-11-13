@@ -9,7 +9,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const compression = require('compression');
 const cookieParser = require('cookie-parser');
-const path = require('path');
+//const path = require('path');
 const isDev = !(process.env.NODE_ENV === 'production');
 
 // Import Nuxt.js options
@@ -36,7 +36,7 @@ async function start() {
     const nuxt = new Nuxt(config);
 
     // 本地模拟数据跨域响应投设置及路由配置
-    app.all('/mock/*', function (req, res, next) {
+    app.all('/mock/*', function(req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");
         res.header('Access-Control-Allow-Headers', 'Content-Type');
         next();
@@ -55,6 +55,25 @@ async function start() {
     // Listen the server
     app.listen(port, host);
     console.log(`Server listening on http://${host}:${port}`) // eslint-disable-line no-console
+
+    // websokcet服务
+    const server = require('http').createServer(app);
+    let io = require('socket.io')(server);
+
+    io.on('connection', function(socket) { // socket相关监听都要放在这个回调里
+        //console.log('一个用户连接到websokcet');
+        /* socket.on("disconnect", function() {
+            console.log("一个用户websokcet连接断开");
+        }); */
+        socket.on("msg", function(obj) {
+            setTimeout(function() {
+                console.log('websokcet发送的消息=>' + obj);
+                io.emit("msg", obj);
+            }, 500);
+        });
+    });
+    //开启websokcet端口监听socket
+    server.listen(8989);
 
 }
 start();

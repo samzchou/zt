@@ -16,6 +16,9 @@
             <el-form-item label="默认值">
                 <el-date-picker style="width:200px" :type="formItem.subtype" :value-format="formItem.valueFormat" :format="formItem.viewFormat||formItem.valueFormat" placeholder="选择默认值" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" v-model="formItem.value" @change="submitForm" />
             </el-form-item>
+            <el-form-item label="占位单元(列数)">
+                <el-slider v-model="formItem.colspan" :min="1" :max="6" @change="submitForm" />
+            </el-form-item>
             <el-form-item label="文本框可输入">
                 <el-switch v-model="formItem.editable" @change="submitForm" />
             </el-form-item>

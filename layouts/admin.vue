@@ -30,7 +30,7 @@ export default {
         appHeader, appAside
     },
     computed: {
-        ...mapState(['sidebar']),
+        ...mapState('admin',['sidebar']),
     },
     data: () => ({
         breadcrumb: [],
@@ -67,6 +67,7 @@ export default {
 		overflow: hidden;
 		.main-content {
 			height: 100%;
+            
 		}
 	}
 }

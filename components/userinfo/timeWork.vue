@@ -12,12 +12,10 @@
                 </el-select>
             </el-form-item>
             <el-form-item class="half" label="开始时间" prop="startTime">
-                <el-time-select placeholder="开始时间" v-model="ruleForm.startTime" :picker-options="{start: '00:00',step: '00:15', end: '24:00'}"
-                    style="width:95%" />
+                <el-time-select placeholder="开始时间" v-model="ruleForm.startTime" :picker-options="{start: '00:00',step: '00:15', end: '24:00'}" style="width:95%" />
             </el-form-item>
             <el-form-item class="half" label="结束时间" prop="endTime">
-                <el-time-select placeholder="结束时间" v-model="ruleForm.endTime" :picker-options="{start: '00:00',step: '00:15', end: '24:00'}"
-                    style="width:100%" />
+                <el-time-select placeholder="结束时间" v-model="ruleForm.endTime" :picker-options="{start: '00:00',step: '00:15', end: '24:00'}" style="width:100%" />
             </el-form-item>
 
             <el-form-item label="描述" prop="desc">
@@ -39,7 +37,7 @@ import {
 export default {
     name: "time-work",
     computed: {
-        ...mapState(['workType', 'workProject', 'timeutilHeight', 'locakMinutes', 'editIndex', 'editBlock']),
+        ...mapState('timeWork', ['workType', 'workProject', 'timeutilHeight', 'locakMinutes', 'editIndex', 'editBlock', 'rangeTime']),
     },
     watch: {
         editBlock: {
@@ -47,14 +45,11 @@ export default {
                 if (obj && !_.isEmpty(obj)) {
                     if (!_.isEmpty(this.$global.difference(obj, this.ruleForm))) {
                         this.ruleForm = _.cloneDeep(obj);
-                        console.log('watch timeWork editBlock', this.ruleForm);
+                        this.ruleForm.startTime = this.$global.ChangeHourMinutestr(obj.startTime);
+                        this.ruleForm.endTime = this.$global.ChangeHourMinutestr(obj.endTime);
                     }
                 }
-                /* this.$nextTick(() => {
-                    this.$refs.myForm.clearValidate();
-                }) */
             },
-            //deep:true
             immediate: true
         }
     },
@@ -83,7 +78,7 @@ export default {
         }
     }),
     methods: {
-        ...mapMutations(['UPDATE_EDITBLOCK']),
+        ...mapMutations('timeWork', ['UPDATE_EDITBLOCK']),
         saveData() {
             this.$refs['myForm'].validate((valid) => {
                 if (valid) {
@@ -92,15 +87,18 @@ export default {
             });
         },
         setWork() {
-            console.log('this.ruleForm', this.ruleForm);
             this.$refs['myForm'].validate((valid) => {
                 if (valid) {
                     this.$emit('close');
-                    this.UPDATE_EDITBLOCK({ ...this.ruleForm });
+                    let obj = _.cloneDeep(this.ruleForm);
+                    obj.startTime = this.$global.changeMyTimeToMin(obj.startTime);
+                    obj.endTime = this.$global.changeMyTimeToMin(obj.endTime);
+                    obj.allTimes = obj.endTime - obj.startTime;
+                    this.UPDATE_EDITBLOCK({ ...obj });
                 }
             });
         },
-        cancelWork(){
+        cancelWork() {
             this.$emit('close');
         }
     },
@@ -112,6 +110,6 @@ export default {
 
 <style lang="scss" scoped>
 .timework-container {
-	padding: 15px;
+    padding: 15px;
 }
 </style>

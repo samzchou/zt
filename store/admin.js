@@ -1,6 +1,7 @@
 /* eslint-disable */
 import VueCookies from 'vue-cookies';
-const navMenu = require('../config/adminMenu');
+//const navMenu = require('../config/adminMenu');
+import navMenu from '~/config/adminMenu';
 export const state = () => ({
     user: null,
     sidebar: {

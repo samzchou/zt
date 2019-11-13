@@ -24,10 +24,17 @@ export default function({ $axios, redirect, store, route }) {
         }
         // Content-Type
         config.headers['Content-Type'] = 'text/plain; charset=UTF-8';
+        // 不需要弹出提示
+        /* if (config.data.data.nothold) {
+            config.nothold = true;
+            delete config.data.data.nothold;
+        } */
+
         // 注入token
         if (config.data && config.data.token === false) {
             delete config.data.token;
         } else {
+            //config.nothold = false;
             config.timeout = 1000 * 60 * 3;
             let token = process.server ? getCookie(config.headers.common.cookie, 'token') : VueCookies.get('token');
             let requireData = { token: token };
@@ -45,6 +52,7 @@ export default function({ $axios, redirect, store, route }) {
     $axios.onResponse(config => {
         let resp = config.data;
         // 后端响应数据处理
+
         if (resp.success === false && !config.config.nothold) {
             config.data = undefined;
         } else if (resp.success === true && !config.config.nothold) {
@@ -52,7 +60,8 @@ export default function({ $axios, redirect, store, route }) {
         } else {
             config.data = resp;
         }
-        // 不清楚后台接口的规范,以下逻辑是根据现有接口推测的
+
+        // config.config.nothold : 不需要弹出提示
         if ((resp.success === true && resp.msgDesc && config.data === '') || resp.success === false) {
             if (!errorhandler) {
                 errorhandler = true;
@@ -61,9 +70,8 @@ export default function({ $axios, redirect, store, route }) {
                     errorhandler = false;
                 }, 1000);
             }
-            //Notification[resp.success ? 'success' : 'error']({ title: resp.msgDesc || resp.msgCode, showClose: false });
         }
-
+        // 非法请求做跳转
         if (resp.success === false && resp.msgCode === 'AUTHENT_EXPIRED') {
             if (resp.url) redirect(`${process.env.server_url}${resp.url}`);
         }

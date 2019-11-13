@@ -5,6 +5,8 @@ body,
 #__nuxt,
 #__layout {
     height: 100%;
+	padding:0;
+	margin:0;
 }
 
 body {
@@ -118,17 +120,24 @@ $scroll-c-content: rgba(147, 147, 164, 0.5);
     &:active,
     &:focus {
         background: transparent;
-        i {
+        i,span {
             color: $c-main;
         }
     }
-    i {
+    i,span {
         color: #666;
     }
+
 }
 
 ul,li{
     list-style: none;
     margin:0;
     padding:0;
+}
+
+.page-error{
+	color:red;
+	font-size:20px;
+	padding:30px;
 }

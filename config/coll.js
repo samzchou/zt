@@ -192,6 +192,46 @@ export default {
             "hide": true,
             "default": ""
         },
+        "username": {
+            "name": "username",
+            "label": "系统账号",
+            "type": "String",
+            "required": true,
+            "component": "sam-input",
+            "cptype": "text",
+            "default": "",
+            "rules": [{
+                    "required": true,
+                    "message": "请填写账号",
+                    "trigger": "blur"
+                },
+                {
+                    "sql": "same"
+                }
+            ]
+        },
+        "password": {
+            "name": "password",
+            "label": "登陆密码",
+            "type": "String",
+            "required": true,
+            "component": "sam-input",
+            "cptype": "text",
+            "tableHide": true,
+            "default": ""
+        },
+        "roles": {
+            "name": "roles",
+            "label": "操作权限",
+            "component": "sam-select",
+            "multiple": true,
+            "optionsUrl": {
+                "table": "roles",
+                "label": "title",
+                "value": "id"
+            },
+            "default": []
+        },
         "e_name": {
             "name": "e_name",
             "label": "员工姓名",
@@ -223,11 +263,11 @@ export default {
             "required": true,
             "component": "sam-date",
             "cptype": "date",
-            "valueFormat": "yyyy-MM-dd",
+            "valueFormat": "timestamp",
             "default": ""
         },
         "e_political_status": {
-            "name": "e_age",
+            "name": "e_political_status",
             "label": "政治面貌",
             "type": "Number",
             "required": true,
@@ -367,7 +407,16 @@ export default {
             "required": true,
             "component": "sam-input",
             "cptype": "text",
-            "default": ""
+            "default": "",
+            "rules": [{
+                    "required": true,
+                    "message": "请填写账号",
+                    "trigger": "blur"
+                },
+                {
+                    "sql": "same"
+                }
+            ]
         },
         "e_phone_number": {
             "name": "e_phone_number",

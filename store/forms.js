@@ -22,6 +22,7 @@ export const state = () => ({
     currForms: {
         ...sourceForm
     },
+	formValue:{},
     currComponent: null,
     collections: [], // 数据表字段
     patterns: sysPatterns.exp,
@@ -105,6 +106,9 @@ export const mutations = {
         }
         state.currComponent = null;
         this.app.store.commit('forms/UPDATE_FORMS', currForms);
+    },
+	UPDATE_FORM_VALUE(state, obj) {
+        state.formValue = obj;
     },
     UPDATE_COLLECTIONS(state, colls) {
         state.collections = colls;

@@ -15,6 +15,9 @@
                     <el-option v-for="o in ajaxOptions" :key="o.value" :label="o.label" :value="o.value" />
                 </el-select>
             </el-form-item>
+            <el-form-item label="占位单元(列数)">
+                <el-slider v-model="formItem.colspan" :min="1" :max="6" @change="submitForm" />
+            </el-form-item>
             <!-- <el-form-item label="数据接口URL">
                 <el-input v-model="formItem.optionsUrl" />
             </el-form-item> -->

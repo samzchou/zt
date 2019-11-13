@@ -7,14 +7,13 @@ export default {
         date.setHours(0, 0, 0, 0);
         return date;
     },
-    // 分钟转小时分
-    ChangeHourMinutestr(str) {
-        if (str !== "0" && str !== "" && str !== null) {
-            return ((Math.floor(str / 60)).toString().length < 2 ? "0" + (Math.floor(str / 60)).toString() :
-                (Math.floor(str / 60)).toString()) + ":" + ((str % 60).toString().length < 2 ? "0" + (str % 60).toString() : (str % 60).toString());
-        } else {
-            return "";
-        }
+    // 毫秒转小时分
+    ChangeHourMinutestr(mss) {
+        let days = parseInt(mss / (1000 * 60 * 60 * 24));
+        let hours = parseInt((mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let minutes = parseInt((mss % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = (mss % (1000 * 60)) / 1000;
+        return (hours < 10 ? '0' + hours : hours) + ":" + (minutes < 10 ? '0' + minutes : minutes);
     },
     // 分钟转换为
     exChange(mss, ext) {
@@ -25,11 +24,11 @@ export default {
         }
         return hours + "小时 " + minutes + "分钟";
     },
-    // 小时分转分钟
+    // 小时分转毫秒
     changeMyTimeToMin(str) {
         let hours = str.split(':')[0];
         let min = str.split(':')[1];
-        return Number(hours) * 60 + Number(min);
+        return Number(hours) * 3600 * 1000 + Number(min) * 60 * 1000;
     },
     setEndTime(satrtDate, minutes) {
         let min = satrtDate.getMinutes();
@@ -39,9 +38,9 @@ export default {
     getAllTimes(list) {
         let allTimes = 0;
         list.forEach(item => {
-            let startMin = this.changeMyTimeToMin(item.startTime); //obj.startTime.split(':')[0];
-            let endMin = this.changeMyTimeToMin(item.endTime);
-            allTimes += (endMin - startMin);
+            //let startMin = this.changeMyTimeToMin(item.startTime);
+            //let endMin = this.changeMyTimeToMin(item.endTime);
+            allTimes += (item.endTime - item.startTime);
         });
         return allTimes;
     },
@@ -60,6 +59,27 @@ export default {
                 return false;
             }
         }
+    },
+    // 递归数据成tree结构
+    toTree(data, opts = {}) {
+        let parentKey = opts.parentKey || 'pid';
+        data.forEach(function(item) {
+            delete item.children;
+        });
+        var map = {};
+        data.forEach(function(item) {
+            map[item.id] = item;
+        });
+        var val = [];
+        data.forEach(function(item) {
+            var parent = map[item[parentKey]];
+            if (parent) {
+                (parent.children || (parent.children = [])).push(item);
+            } else {
+                val.push(item);
+            }
+        });
+        return val;
     },
     // 检测两个DOM碰撞情况，created By sam
     hit(source, targets) {

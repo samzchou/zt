@@ -5,14 +5,17 @@
             <div class="page-title">
                 <el-breadcrumb separator-class="el-icon-arrow-right">
                     <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-                    <el-breadcrumb-item v-for="(page,index) in pageTitle" :key="index">{{page.label}}</el-breadcrumb-item>
+                    <el-breadcrumb-item v-for="(page,index) in pageTitle" :key="index">{{page.title}}</el-breadcrumb-item>
                 </el-breadcrumb>
             </div>
         </div>
         <div class="right">
-            <i class="avatar" style="background-image:url('/images/head_male.jpg')" />
-            <span>张三，您好！</span>
-            <el-button type="text" icon="el-icon-switch-button" @click="logout">注销退出</el-button>
+			<template v-if="user">
+				<i class="avatar" style="background-image:url('/images/head_male.jpg')" />
+				<span>{{user.e_name}}，您好！</span>
+				<el-button v-if="user.username=='admin'" type="text" icon="el-icon-switch-button" @click="$router.push('/admin')">管理后台</el-button>
+				<el-button type="text" icon="el-icon-switch-button" @click="logout">注销退出</el-button>
+			</template>
         </div>
     </section>
 </template>
@@ -21,6 +24,7 @@
 import {
     mapState, mapMutations
 } from 'vuex';
+//import WebSocket from '~/util/webSocket';
 export default {
     watch: {
         '$route': 'setRouter'
@@ -29,7 +33,7 @@ export default {
         pageTitle: [],
     }),
     computed: {
-        ...mapState(['sidebar', 'navMenu']),
+        ...mapState(['user', 'sidebar', 'serviceList']),
     },
     methods: {
         ...mapMutations(['TOGGLE_SIDEBAR', 'UPDATE_USER', 'UPDATE_MENUACTIVE']),
@@ -41,9 +45,9 @@ export default {
             if (!pathArr[0]) {
                 pathArr.splice(0, 1);
             }
-            let pIndex = _.findIndex(this.navMenu, { "name": pathArr[0] });
+            let pIndex = _.findIndex(this.serviceList, { "name": pathArr[0] });
             if (!!~pIndex) {
-                let menu = this.navMenu[pIndex];
+                let menu = this.serviceList[pIndex];
                 actIndex += pIndex;
                 this.pageTitle.push(menu);
                 if (menu.children && menu.children.length) {
@@ -67,11 +71,12 @@ export default {
                 this.$cookies.set('token', '');
                 this.$router.push('/login');
             }).catch(() => { });
+        },
 
-        }
     },
     mounted() {
         this.setRouter();
+        //this.initWebSocket();
     }
 }
 </script>

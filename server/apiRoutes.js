@@ -7,7 +7,6 @@ router.all("*", (req, res, next) => {
     res.writeHead(200, {
         'Content-Type': 'application/json'
     });
-
     try {
         let module_path = path.posix.join('../mock', req.path);
         let module = require(module_path);

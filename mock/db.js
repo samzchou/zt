@@ -253,14 +253,16 @@ const dbFun = {
             data.password = this._setHash(data.password);
         }
         // 计数器，先判断是否存在数据，如果没有则创建一条数据
-        let counter = await mongoDB.counters.findOne({ "model": tn });
-        if (!counter) {
-            await mongoDB.counters.create({ "model": tn, count: 0 });
+        if (!data.id) {
+            let counter = await mongoDB.counters.findOne({ "model": tn });
+            if (!counter) {
+                await mongoDB.counters.create({ "model": tn, count: 0 });
+            }
+            let counters = await mongoDB.counters.findOne({
+                'model': tn
+            });
+            data.id = counters.count + 1;
         }
-        let counters = await mongoDB.counters.findOne({
-            'model': tn
-        });
-        data.id = counters.count + 1;
         let result = await mongoDB[tn].create(data);
         //console.log('addData',result);
         if (result) {
@@ -432,6 +434,7 @@ const dbFun = {
             expiresIn: 60 * 60 * 1 // 1小时过期
         });
         data.password = this._setHash(data.password);
+        //console.log('data.password', data.password)
         let result = await mongoDB[tn].findOne(data);
         if (result) {
             result.token = token;
@@ -451,6 +454,35 @@ const dbFun = {
     },
     async logout() {
 
+    },
+    // 数据校验
+    async checkValidator(params) {
+        let tn = params.collectionName;
+        let data = params.data;
+        let result;
+        if (params.valid == 'same') {
+            result = await mongoDB[tn].findOne(data);
+        }
+        let response = {
+            "success": true,
+            "response": result
+        }
+        return response;
+    },
+    async getServerTime() {
+        return {
+            success: true,
+            response: new Date().getTime()
+        }
+    },
+    async serverTimeRange() {
+        return {
+            success: true,
+            response: {
+                startTime: new Date(new Date().toLocaleDateString()).getTime(),
+                endTime: new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1
+            }
+        }
     }
 }
 

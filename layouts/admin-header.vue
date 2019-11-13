@@ -12,7 +12,7 @@
         </div>
         <div class="right">
             <i class="avatar" style="background-image:url('/images/head_male.jpg')" />
-            <span>张三，您好！</span>
+            <span>{{user?user.e_name:''}}，您好！</span>
             <el-button type="text" icon="el-icon-switch-button" @click="logout">注销退出</el-button>
         </div>
     </section>
@@ -30,10 +30,12 @@ export default {
         pageTitle: [],
     }),
     computed: {
+        ...mapState(['user']),
         ...mapState('admin', ['sidebar', 'navMenu']),
     },
     methods: {
-        ...mapMutations('admin', ['TOGGLE_SIDEBAR', 'UPDATE_MENUACTIVE']),
+        ...mapMutations(['UPDATE_USER']),
+		...mapMutations('admin', ['TOGGLE_SIDEBAR', 'UPDATE_MENUACTIVE']),
         setRouter() {
             console.log('this.$route.path', this.$route.path);
             let actIndex = '';

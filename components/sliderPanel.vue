@@ -135,15 +135,15 @@ export default {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        height: 50px;
+        height: 40px;
         padding: 0 20px;
         color: #666;
         font-weight: bold;
-        font-size: 16px;
+        font-size: 14px;
         box-sizing: border-box;
         border-bottom: $border-base;
         i {
-            font-size: 18px;
+            font-size: 16px;
             cursor: pointer;
             color: #ccc;
         }

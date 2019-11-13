@@ -29,7 +29,10 @@
                 <el-checkbox :value="valid4.enable" @change="handleValid4({enable:$event})">后台SQL验证(待完善)</el-checkbox>
             </div>
             <div v-show="valid4.enable">
-                <el-input size="mini" :value="valid4.sql" @change="handleValid4({sql:$event})" />
+                <el-select :value="valid4.sql" size="mini" placeholder="请选择" @change="handleValid4({sql:$event})">
+                    <el-option v-for="item in sqlType" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                </el-select>
+                <!-- <el-input size="mini" :value="valid4.sql" @change="handleValid4({sql:$event})" /> -->
             </div>
         </template>
     </div>
@@ -63,7 +66,11 @@ export default {
     data() {
         return {
             itemRules: [],
-            regOptions: []
+            regOptions: [],
+            sqlType: [
+                { label: "校验相同值", value: "same" },
+                { label: "其他待扩展", value: "other" }
+            ]
         }
     },
     methods: {
@@ -135,7 +142,7 @@ export default {
             });
             if (enable) {
                 // 勾选或者修改数值
-                const newRule = { sql, message: 'sql验证失败', trigger: ['blur', 'change'] };
+                const newRule = { sql };
                 if (ruleIndex === -1) {
                     // 勾选操作
                     this.itemRules.push(newRule);
@@ -200,7 +207,7 @@ export default {
                 sql: this.itemRules[idx].sql
             } : {
                     enable: false,
-                    sql: 'SELECT {key} FORM MYTABLE'
+                    sql: 'same'
                 }
         }
     },

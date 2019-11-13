@@ -10,17 +10,16 @@
                 </div>
             </div>
         </div>
-        <div class="time-block" v-for="(block,idx) in blockList" :key="idx" :class="{'active':activeIndex==idx}" v-clickoutside="handleClickOutside"
-            @click="editMyBlock(idx)" :style="{'top':block.rect.top+'px','height':block.rect.height+'px'}">
+        <div class="time-block" v-for="(block,idx) in blockList" :key="idx" :class="{'active':activeIndex==idx}" v-clickoutside="handleClickOutside" @click="editMyBlock(idx)" :style="{'top':block.rect.top+'px','height':block.rect.height+'px'}">
             <div class="title">
                 <span>上班</span>
-                <span class="all-times">all times:{{block.allTimes}}</span>
+                <span class="all-times">{{setAllTime(block.allTimes)}}</span>
                 <i class="el-icon-close" @click="remove(idx)" />
             </div>
             <div class="desc">
                 <div>工作分类：{{getWorkStr('workType', block.type)}}</div>
                 <div>项目：{{getWorkStr('workProject', block.project)}}</div>
-                <div>备注描述：<br/>{{ block.desc}}</div>
+                <div>备注描述：<br />{{ block.desc}}</div>
                 <div>完成情况：已完成</div>
             </div>
             <div class="resize" @mousedown="handlerMouserDown(idx, $event)" />
@@ -38,10 +37,11 @@ export default {
     directives: { Clickoutside },
     props: {
         colIndex: Number,
+        time: Object,
         dataList: Array
     },
     computed: {
-        ...mapState(['workType', 'workProject', 'timeutilHeight', 'locakMinutes', 'editIndex', 'editBlock']),
+        ...mapState('timeWork', ['workType', 'workProject', 'timeutilHeight', 'locakMinutes', 'editIndex', 'editBlock', 'rangeTime']),
     },
     watch: {
         editBlock: {
@@ -51,15 +51,12 @@ export default {
                         this.activeIndex = _.findIndex(this.blockList, { 'index': obj.index });
                         this.currBlock = this.blockList[this.activeIndex];
                         // 如果数据有所改变则更新
-                        debugger
                         if (!_.isEmpty(this.$global.difference(obj, this.currBlock))) {
-                            //
                             this.currBlock = _.cloneDeep(obj);
                             let conditions = this.updatePosition(this.currBlock);
-                            this.currBlock = _.merge(this.currBlock, conditions);
+                            this.currBlock = Object.assign({}, this.currBlock, conditions);
                             this.$set(this.blockList, this.activeIndex, this.currBlock);
-                            this.$emit('updateList', this.blockList, this.colIndex);
-                            //console.log('watch timeCol editBlock', this.currBlock);
+                            //this.$emit('updateList', this.blockList, this.colIndex);
                         }
                     }
                 }
@@ -68,8 +65,7 @@ export default {
         },
         dataList: {
             handler(data) {
-                //this.blockList = [];
-                if(data && _.isArray(data)){
+                if (data && _.isArray(data)) {
                     this.blockList = data.map(item => {
                         return item;
                     });
@@ -85,7 +81,11 @@ export default {
         dragging: false,
     }),
     methods: {
-        ...mapMutations(['UPDATE_EDITINDEX', 'UPDATE_EDITBLOCK', 'UPDATE_EDITINGTIME']),
+        ...mapMutations('timeWork', ['UPDATE_EDITINDEX', 'UPDATE_EDITBLOCK', 'UPDATE_EDITINGTIME']),
+        setAllTime(milliseconds) {
+            milliseconds = !milliseconds ? 0 : milliseconds;
+            return this.$global.ChangeHourMinutestr(milliseconds);
+        },
         getWorkStr(ca, val) {
             //debugger
             if (val) {
@@ -105,27 +105,23 @@ export default {
             }).catch(() => { });
         },
         updatePosition(obj) {
-            let startMin = this.$global.changeMyTimeToMin(obj.startTime); //obj.startTime.split(':')[0];
-            let endMin = this.$global.changeMyTimeToMin(obj.endTime);
-            let height = (endMin - startMin);
+            let startMin = obj.startTime / 1000 / 60;
+            let height = obj.allTimes / 1000 / 60;
             return {
-                "rowIndex": startMin / this.locakMinutes,
-                "allTimes": this.getMyTime(height, true),
                 "rect": {
                     "height": (height / this.locakMinutes) * this.timeutilHeight,
                     "top": (startMin / this.locakMinutes) * this.timeutilHeight
                 }
             }
-
-            console.log(startMin, endMin);
         },
         handleClickOutside() {
             this.activeIndex = -1;
             this.UPDATE_EDITINDEX('');
         },
+        // 
         getMyTime(str, auto) {
             if (!auto) str = str * this.locakMinutes;
-            return ((Math.floor(str / 60)).toString().length < 2 ? "0" + (Math.floor(str / 60)).toString() : (Math.floor(str / 60)).toString()) + ":" + ((str % 60).toString().length < 2 ? "0" + (str % 60).toString() : (str % 60).toString());
+            return this.$global.ChangeHourMinutestr(str * 60 * 1000);
         },
 
         editMyBlock(index) {
@@ -135,6 +131,7 @@ export default {
             this.UPDATE_EDITINDEX(this.colIndex + '-' + this.activeIndex);
             this.UPDATE_EDITBLOCK(_.cloneDeep(this.currBlock));
         },
+        // 创建一个新的时间钟块
         createBlock(index, evt) {
             this.activeIndex = this.blockList.length; //this.blockList.length ? this.blockList.length - 1 : 0;
             let target = evt.target.parentElement.parentElement; // 单元格目标
@@ -146,13 +143,14 @@ export default {
                     top: index * this.timeutilHeight,
                     height: this.timeutilHeight
                 },
-                startTime: this.changeHourMinutestr(this.locakMinutes * index),
-                endTime: this.changeHourMinutestr(this.locakMinutes * (index + 1)),
-                allTimes: this.changeHourMinutestr(this.locakMinutes)
+                startTime: this.locakMinutes * index * 60 * 1000,
+                endTime: this.locakMinutes * (index + 1) * 60 * 1000,
+                allTimes: this.locakMinutes * 60 * 1000
             };
             this.blockList.push(obj);
             this.currBlock = obj;
-            //console.log('this.blockList', this.blockList);
+
+            // 上报事件
             this.$emit('addBlock', this.colIndex, obj);
 
             this.UPDATE_EDITINDEX(this.colIndex + '-' + this.activeIndex);
@@ -170,8 +168,8 @@ export default {
         // 时间块resize后重新设定时长
         resetTimes(hh) {
             let minutes = (this.currBlock.rect.height / this.timeutilHeight) * this.locakMinutes;
-            this.currBlock.endTime = this.changeHourMinutestr((hh + this.currBlock.rowIndex) * this.locakMinutes);
-            this.currBlock.allTimes = this.changeHourMinutestr(minutes);
+            this.currBlock.endTime = minutes * 60 * 1000; //this.changeHourMinutestr((hh + this.currBlock.rowIndex) * this.locakMinutes);
+            this.currBlock.allTimes = this.currBlock.endTime - this.currBlock.startTime;//this.changeHourMinutestr(minutes);
             console.log('this.currBlock', this.currBlock);
             this.UPDATE_EDITBLOCK(_.cloneDeep(this.currBlock));
         },
@@ -213,129 +211,11 @@ export default {
             }
             document.addEventListener('mousemove', handleMouseMove);
             document.addEventListener('mouseup', handleMouseUp);
-        }
+        },
     }
 }
 </script>
 
 <style lang="scss" scoped>
-//$timeutil-height: 20px; see ~/assets/scss/var
-.grid-container {
-	position: relative;
-	.cols {
-		> div {
-			height: $timeutil-height;
-			box-sizing: border-box;
-			border-top: 1px solid #eceef1;
-			position: relative;
-			&.bh {
-				border-color: #d6e3e8;
-			}
-			&:hover {
-				.show-time {
-					display: block;
-				}
-			}
-			.show-time {
-				pointer-events: none;
-				display: none;
-				cursor: default;
-				user-select: none;
-				width: 100%;
-				height: $timeutil-height;
-				position: absolute;
-				top: -11px;
-				background: -webkit-linear-gradient(
-						top,
-						transparent 10px,
-						#0a3fff 11px
-					),
-					-webkit-linear-gradient(left, transparent 10px, transparent
-								11px);
-				background-size: 11px 11px;
-				text-align: center;
-				font-size: 9px;
-				line-height: $timeutil-height;
-				> span {
-					pointer-events: auto;
-					display: inline-block;
-					padding: 0 10px;
-					background-color: #fff;
-					transform: scale(0.8);
-				}
-			}
-		}
-	}
-	.time-block {
-		//display: none;
-		position: absolute;
-		left: 10px;
-		right: 10px;
-		box-sizing: border-box;
-		background-color: rgba(245, 245, 245, 0.85);
-		border: 1px solid #ddd;
-		box-shadow: 2px 2px 2px 0 rgba(0, 0, 0, 0.1);
-		transition: all 0.25s;
-		user-select: none;
-		&.active {
-			background-color: #f5faff;
-			border-color: #b1ccff;
-		}
-		.title {
-			font-size: 12px;
-			line-height: 20px;
-			padding: 0 5px;
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			border-bottom: 1px solid #d4e1ef;
-			background-color: #ddeaf7;
-			> span {
-				transform: scale(0.9);
-				&.all-times {
-					font-size: 9px;
-					color: #658cff;
-					bottom: 0;
-					right: 0;
-					font-family: inherit;
-					transform: scale(0.8);
-				}
-			}
-		}
-		.desc {
-			padding: 5px 0;
-			font-size: 12px;
-			box-sizing: border-box;
-			height: calc(100% - 25px);
-			overflow: hidden;
-			> div {
-				transform: scale(0.9);
-				line-height: 22px;
-				word-break: break-all;
-			}
-		}
-		.resize {
-			position: absolute;
-			bottom: -4px;
-			width: 30px;
-			left: calc(50% - 15px);
-			border: 1px solid #d82b07;
-			border-width: 1px 0;
-			height: 1px;
-			cursor: ns-resize;
-		}
-		.work-desc {
-			font-size: 12px;
-			padding: 10px;
-			box-sizing: border-box;
-			overflow: hidden;
-			height: 100%;
-			.opts {
-				font-weight: bold;
-				color: #b30a00;
-				padding-bottom: 10px;
-			}
-		}
-	}
-}
+@import './timeCol';
 </style>

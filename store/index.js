@@ -1,7 +1,8 @@
 /* eslint-disable */
 //import VueCookies from 'vue-cookies';
 const VueCookies = require('vue-cookies');
-const navMenu = require('../config/navMenu');
+//const navMenu = require('../config/navMenu');
+import dataUtil from '../util/data_util';
 
 export const state = () => ({
     user: null,
@@ -10,36 +11,15 @@ export const state = () => ({
         withoutAnimation: false
     },
     menuAcitve: "",
-    navMenu: navMenu.menuList,
+    //navMenu: navMenu.menuList,
     pageTitle: '主页',
-    weekArray: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
-    workType: [{
-        label: "工作分类一",
-        id: 1
-    }, {
-        label: "工作分类二",
-        id: 2
-    }],
-    workProject: [{
-        label: "项目一",
-        id: 1
-    }, {
-        label: "项目二",
-        id: 2
-    }],
-    timeutilHeight: 20,
-    locakMinutes: 15,
-    isEditTime: false,
-    editBlock: null,
-    editIndex: '',
-    userTimeBlocks: [],
+	serviceList:[],
+	collectionData:{}
 })
 
 export const mutations = {
     UPDATE_MENUACTIVE(state, index) {
         state.menuAcitve = index;
-        //debugger
-        console.log('state.menuAcitve', state.menuAcitve);
     },
     UPDATE_USER(state, data) {
         state.user = data;
@@ -47,27 +27,18 @@ export const mutations = {
             this.app.$storage.set('user', state.user);
         }
     },
-    UPDATE_USERBLOCK(state, obj) {
-        state.userTimeBlocks = obj;
-    },
-    UPDATE_EDITBLOCK(state, obj) {
-        state.editBlock = obj;
-        //console.log('state.editBlock', state.editBlock);
-    },
-    UPDATE_EDITINDEX(state, indexStr) {
-        state.editIndex = indexStr;
-        state.isEditTime = true;
-        //console.log('state.editIndex', state.editIndex);
-    },
-    UPDATE_EDITINGTIME(state, flag) {
-        state.isEditTime = flag;
-        //console.log('state.editIndex', state.editIndex);
-    },
     TOGGLE_SIDEBAR: state => {
         VueCookies.set('sidebarStatus', state.sidebar.opened ? 1 : 0);
         state.sidebar.opened = !state.sidebar.opened;
         state.sidebar.withoutAnimation = false;
     },
+	UPDATE_SERVICE(state, list){
+		//state.serviceList = list;
+		state.serviceList = dataUtil.toTree(list);
+	},
+	UPDATE_COLLECTIONS_DATA(state, obj){
+		state.collectionData = obj;
+	}
 }
 
 export const actions = {
@@ -78,23 +49,35 @@ export const actions = {
             user = await this.$axios.$post('mock/db', {
                 data: {
                     type: 'getData',
-                    collectionName: 'user',
+                    collectionName: 'employee',
                     data: {
                         token: req.cookies.token
                     }
                 }
             });
+            //console.log('nuxtServerInit', user);
         }
         commit('UPDATE_USER', user);
+		// 系统常用值集
+		let obj = {}, names = ['department', 'user', 'roles','service'];
+		for(let i=0; i<names.length; i++){
+			let condition = {
+				type: 'listData',
+				collectionName: names[i]
+			}
+			let res = await this.$axios.$post('mock/db', { data: condition });
+			obj[names[i]] = res.list;
+		}
+		//console.log('obj', obj);
+		commit('UPDATE_COLLECTIONS_DATA', obj);
     },
-    async ASYNC_UPDATE_LOCALE({ commit }, lang) {
-        /* let flag = await this.$axios.$post('/api/user/changLocale', {
+    async ASYNC_GET_SERVICE({ commit }, lang) {
+        let res = await this.$axios.$post('mock/db', {
             data: {
-                newLocale: lang
+                type: 'listData',
+				collectionName: 'service',
             }
         });
-        if (flag !== undefined) {
-            this.$router.go(0);
-        } */
+        commit('UPDATE_SERVICE', res.list);
     },
 }

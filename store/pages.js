@@ -19,7 +19,8 @@ export const state = () => ({
         title: "我的页面",
         content: {}
     },
-    formList: [] // 表单列表
+    formList: [], // 表单列表
+	collectionData:{}, // 主要集合数据
 })
 
 export const mutations = {
@@ -80,7 +81,10 @@ export const mutations = {
     },
     UPDATE_FORMLIST(state, list) {
         state.formList = list;
-    }
+    },
+	UPDATE_COLLECTIONS_DATA(state, obj){
+		state.collectionData = obj;
+	}
 }
 
 export const actions = {
@@ -98,4 +102,18 @@ export const actions = {
         //console.log(res);
         commit('UPDATE_FORMLIST', list);
     },
+	async ASYNC_COLLECTIONS_DATA({ commit }, names=['department', 'user','roles']) {
+		//console.log('ASYNC_COLLECTIONS_DATA', names);
+		let obj = {};
+		for(let i=0; i<names.length; i++){
+			let condition = {
+				type: 'listData',
+				collectionName: names[i]
+			}
+			let res = await this.$axios.$post('mock/db', { data: condition });
+			obj[names[i]] = res.list;
+		}
+		//console.log('ASYNC_COLLECTIONS_DATA', obj);
+		commit('UPDATE_COLLECTIONS_DATA', obj);
+	}
 }

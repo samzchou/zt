@@ -12,9 +12,13 @@
                     <el-option v-for="o in formItem.options" :key="o.value" :label="o.label" :value="o.value"></el-option>
                 </el-select>
             </el-form-item>
+            <el-form-item label="占位单元(列数)">
+                <el-slider v-model="formItem.colspan" :min="1" :max="6" @change="submitForm" />
+            </el-form-item>
+            <!--
             <el-form-item label="数据接口URL">
                 <el-input v-model="formItem.optionsUrl" />
-            </el-form-item>
+            </el-form-item>-->
             <el-form-item label="显示边框">
                 <el-switch v-model="formItem.border" @change="submitForm" />
             </el-form-item>

@@ -5,7 +5,7 @@
             <div class="header">
                 <div class="title">
                     <span>编辑页面</span>
-                    <el-button icon="el-icon-back" type="text" @click="$router.push('/admin/forms/list')">返回页面列表</el-button>
+                    <el-button icon="el-icon-back" type="text" @click="$router.push('/admin/page/list')">返回页面列表</el-button>
                 </div>
                 <div>
                     <el-button class="icon-link" v-if="!codeVisible" icon="el-icon-plus" @click="createNew(true)">新建</el-button>
@@ -27,7 +27,8 @@
             <!--主体画布-->
             <div class="draw-container" v-else>
                 <el-scrollbar class="scrollbar">
-                    <sam-page :data="pageForm" :isRelease="true" />
+                    <page-data :data="pageForm" :isRelease="true" :listParam="{}" />
+                    <!-- <sam-page :data="pageForm" :isRelease="true" /> -->
                 </el-scrollbar>
             </div>
         </div>
@@ -41,14 +42,11 @@
                         </div>
                         <div class="content">
                             <el-scrollbar class="scrollbar" ref="scrollTree">
-                                <!--@selection-change="handleSelectionChange"-->
                                 <el-table size="mini" ref="multipleTable" :data="tableList.filter(data => !filterText || data.form_name.toLowerCase().includes(filterText.toLowerCase()))" :show-header="false" highlight-current-row style="width: 100%">
-                                    <!-- <el-table-column type="selection" width="55" /> -->
                                     <el-table-column label="表单名称">
                                         <template slot-scope="scope">
                                             <div :class="{'active':scope.row.active}" @click="rowClick(scope.row)">
                                                 <el-checkbox v-model="scope.row.active" />
-                                                <!-- <i class="el-icon-circle-check" /> -->
                                                 <span>{{ scope.row.form_name }}</span>
                                             </div>
                                         </template>
@@ -98,10 +96,11 @@ import {
     mapState, mapMutations, mapActions
 } from 'vuex';
 import samPage from '~/components/page';
+import pageData from '~/components/page/data';
 import sliderPanel from '~/components/sliderPanel';
 export default {
     components: {
-        sliderPanel, samPage
+        sliderPanel, samPage, pageData
     },
     computed: {
         ...mapState('pages', ['formList', 'pageForm']),
@@ -110,7 +109,6 @@ export default {
         formList: {
             handler(list) {
                 this.tableList = _.cloneDeep(list);
-                //console.log('list', list);
                 this.$nextTick(() => {
                     this.INIT_PAGES();
                 })
@@ -119,12 +117,13 @@ export default {
         },
         pageForm: {
             handler(obj) {
-                let dd = this.$global.difference(obj, this.rowForm);
-                //console.log('watch pageForm', dd);
+                console.log('addnew watch pageForm', obj);
                 this.setPageData();
-                /* if (!_.isEmpty(dd)) {
-                    this.setPageData();
-                } */
+                //let dd = this.$global.difference(obj, this.rowForm);
+                /*  if (obj && !_.isEmpty(obj.content)) {
+                     this.setPageData();
+                 } */
+
             },
             immediate: true
         }
@@ -135,9 +134,10 @@ export default {
         filterText: '',
         tableList: [],
         pageData: {},
-        //formValue: {},
         activeTab: 'attrForm',
-        rowForm: {},
+        rowForm: {
+            filterFields: []
+        },
         codeVisible: false,
         codeOption: {
             tabSize: 4,
@@ -165,15 +165,17 @@ export default {
                 data: {
                     "create_eid": this.$store.state.user.id,
                     "page_name": pageForm.title,
-                    "content": pageForm
+                    "content": { ...pageForm }
                 }
             };
             if (pageForm.id) {
                 condition.type = "updateData";
             }
-            // console.log('saveMyPage', condition);
+            delete condition.data.content.content;
+            console.log('saveMyPage', condition);
+            //return;
             this.$axios.$post('mock/db', { data: condition }).then(result => {
-                //console.log('result', result);
+                console.log('result', result);
                 this.$message.success(pageForm.id ? "编辑成功" : "新增成功");
                 pageForm.id = result.id;
                 this.saveLoading = false;
@@ -185,7 +187,6 @@ export default {
             let code = this.$refs.myCm.value;
             if (this.$global.isJSON(code)) {
                 code = JSON.parse(code);
-                //console.log('backForm', code)
                 this.UPDATE_PAGES({ ...code });
                 this.codeVisible = false;
             } else {
@@ -203,8 +204,9 @@ export default {
                     item.active = actived;
                 }
                 return item;
-            })
+            });
             pages.content = actived ? row.content : {};
+            pages.formid = row.id;
             //console.log('rowClick', row, pages);
             this.UPDATE_PAGES({ ...pages });
         },
@@ -218,15 +220,14 @@ export default {
             }
         },
         selectFields(rows) {
-            console.log('selectFields', rows);
             this.rowForm.filterFields = rows.map(item => {
-                return item.name
+                return item.name;
             });
             this.setFrom();
         },
         setFrom() {
             let pageForm = Object.assign({}, this.pageForm, this.rowForm);
-            console.log('setFrom', pageForm);
+            //console.log('setFrom', pageForm);
             this.UPDATE_PAGES({ ...pageForm });
         },
         setFilter(val) {
@@ -241,18 +242,6 @@ export default {
             let pageForm = Object.assign({}, this.pageForm);
             this.pageCode = JSON.stringify({ ...pageForm }, null, 4);
             this.rowForm = { ...pageForm };
-            //this.rowForm.filterFields = pageForm.content.itemList;
-            //delete this.rowForm.content;
-            /* if (this.$refs.multipleTable && this.pageForm.list.length && this.tableList.length) {
-                this.pageForm.list.forEach(item => {
-                    let index = _.findIndex(this.tableList, { "id": item.id });
-                    if (!!~index) {
-                        let item = this.tableList[index];
-                        item.active = true;
-                        this.$set(this.tableList, index, item);
-                    }
-                })
-            } */
         },
         // 代码发生改变
         onCmCodeChange(code) {

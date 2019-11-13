@@ -13,6 +13,9 @@
             <el-form-item label="默认值">
                 <input-number v-model="formItem.value" clearable @input="submitForm" />
             </el-form-item>
+            <el-form-item label="占位单元(列数)">
+                <el-slider v-model="formItem.colspan" :min="1" :max="6" @change="submitForm" />
+            </el-form-item>
             <el-form-item label="前缀">
                 <el-input v-model="formItem.prepend" @blur="submitForm" />
             </el-form-item>

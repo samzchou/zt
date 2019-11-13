@@ -9,8 +9,8 @@
             <el-row :gutter="formData.gutter">
                 <draggable v-model="formData.itemList" @start="startDrag" @end="updateDragForm" :disabled="!isEdit">
                     <transition-group name="list-complete">
-                        <el-col value-key="id" class="draggable list-complete-item" :class="{'frozen':isEdit,'active':currComponent&&currComponent.name==item.name &&isEdit}" v-for="item in formData.itemList" :key="item.key" :span="setColspan(formData.colspan)" @click.native="selectItem(item)">
-                            <form-item v-if="value[item.key]!==undefined" :key="item.key" :item="item" :value="value[item.key]" @input="handleInput($event, item)" @selected="handleInput($event, item)" />
+                        <el-col value-key="id" class="draggable list-complete-item" :class="{'frozen':isEdit,'active':currComponent&&currComponent.name==item.name &&isEdit}" v-for="item in formData.itemList" :key="item.key" :span="setColspan(item.colspan||formData.colspan)" @click.native="selectItem(item)">
+                            <form-item v-if="value[item.key]!==undefined" :key="item.key" :item="item" :value="value[item.key]" :itemValue="{'val':value[item.key]}" :isFilter="isFilter" @input="handleInput($event, item)" @selected="handleInput($event, item)" />
                             <i class="remove el-icon-delete" title="移除" @click.stop.prevent="REMOVE_ITEM(item)" />
                         </el-col>
                     </transition-group>
@@ -53,6 +53,10 @@ export default {
             type: Boolean,
             default: false
         },
+        isFilter: {
+            type: Boolean,
+            default: false
+        }
     },
     watch: {
         data: {
@@ -77,7 +81,7 @@ export default {
         },
     }),
     methods: {
-        ...mapMutations('forms', ['UPDATE_FORMS', 'UPDATE_ITEM', 'REMOVE_ITEM']),
+        ...mapMutations('forms', ['UPDATE_FORMS', 'UPDATE_ITEM', 'REMOVE_ITEM', 'UPDATE_FORM_VALUE']),
         // 关闭标题
         closeTitle() {
             let formData = _.cloneDeep(this.data);
@@ -86,7 +90,6 @@ export default {
         },
         // 表单组件值发生改变
         handleInput(val, item) {
-            console.log('handleInput', val, item);
             this.$emit('input', { ...this.value, [item.key]: val });
             if (item.emit) {
                 for (let i = 0; i < item.emit.length; i++) {
@@ -135,6 +138,7 @@ export default {
         // 设置表单数据
         setFormData() {
             this.formData = _.cloneDeep(this.data);
+            this.UPDATE_FORM_VALUE(this.value);
             //console.log('setFormData', this.formData);
         },
         // 选中组件进行编辑
@@ -150,6 +154,7 @@ export default {
         },
         // 结束拖动
         updateDragForm(obj) {
+            this.UPDATE_FORMS({ ...this.formData });
             this.$global.removeClass(obj.item, 'dragging');
         }
     },
@@ -159,14 +164,12 @@ export default {
             this.setFormData();
         });
         // 监听键盘的DELETE按键
-        document.onkeydown = (e) => {
+        /* document.onkeydown = (e) => {
             let key = window.event.keyCode;
-            //console.log('key', key)
             if (key == 46 || key == 110) {
-                //console.log()
                 //this.REMOVE_ITEM(this.currComponent);
             }
-        };
+        }; */
         $bus.$on("submitForm", (obj) => {
             console.log('submitForm', obj, this.formRules);
         })

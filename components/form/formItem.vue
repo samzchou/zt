@@ -1,11 +1,11 @@
 <template>
     <el-form-item v-if="item" :label="item.label" :prop="item.key" :rules="Rules">
         <!-- 文本-->
-        <el-input v-if="item.component==='sam-input'||item.component==='sam-richtext'" v-bind="$attrs" v-on="$listeners" :type="item.cptype||'text'" :placeholder="item.placeholder||''" :prop="item.value||''" :readonly="item.readonly" :disabled="item.disabled" />
+        <el-input v-if="item.component==='sam-input'||item.component==='sam-richtext'" v-bind="$attrs" v-on="$listeners" :type="item.cptype||'text'" :placeholder="item.placeholder||''" :prop="item.value||''" :readonly="item.readonly" :disabled="item.disabled" :show-password="item.cptype=='password'" clearable @change="setValue" />
         <!-- 日期 -->
-        <el-date-picker v-else-if="item.component==='sam-date'" v-bind="$attrs" v-on="$listeners" :type="item.cptype" value-format="timestamp" editable range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" :placeholder="item.placeholder" :disabled="item.disabled" />
+        <el-date-picker v-else-if="item.component==='sam-date'" v-bind="$attrs" v-on="$listeners" :type="item.cptype" value-format="timestamp" editable range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" :disabled="item.disabled" @change="setValue" />
         <!-- 数字 -->
-        <input-number v-else-if="item.component==='sam-number'" v-bind="$attrs" v-on="$listeners" :prepend="item.prepend" :append="item.append" :min="item.min" :max="item.max" :decimal1="item.decimal1" :disabled="item.disabled" />
+        <input-number v-else-if="item.component==='sam-number'" v-bind="$attrs" v-on="$listeners" :prepend="item.prepend" :append="item.append" :min="item.min" :max="item.max" :decimal1="item.decimal1" :disabled="item.disabled" :placeholder="item.placeholder||''" @change="setValue" />
         <!-- 单选 有BUG-->
         <el-radio-group v-else-if="item.component==='sam-radio'" v-bind="$attrs" v-on="$listeners" :disabled="item.disabled">
             <component :is="item.button?'el-radio-button':'el-radio'" v-for="o in ajaxOptions" :key='o.id' :label="o.value" :border="item.border">
@@ -13,11 +13,11 @@
             </component>
         </el-radio-group>
         <!-- 下拉 -->
-        <el-select v-else-if="item.component==='sam-select'" v-bind="$attrs" v-on="$listeners" :multiple="item.multiple" :multiple-limit="item.multipleLimit" :disabled="item.disabled" clearable>
+        <el-select v-else-if="item.component==='sam-select'" v-bind="$attrs" v-on="$listeners" :multiple="item.multiple" :multiple-limit="item.multipleLimit" :disabled="item.disabled" :placeholder="item.placeholder||''" clearable @change="setValue">
             <el-option v-for="o in ajaxOptions" :key="o.value" :label="o.label" :value="o.value" />
         </el-select>
         <!--级联-->
-        <el-cascader v-else-if="item.component==='sam-cascader'" :options="ajaxOptions" :props="defaultPtops" v-bind="$attrs" v-on="$listeners" :disabled="item.disabled" clearable />
+        <el-cascader v-else-if="item.component==='sam-cascader'" :options="ajaxOptions" :props="defaultPtops" v-bind="$attrs" v-on="$listeners" :disabled="item.disabled" :placeholder="item.placeholder||''" clearable @change="setValue" />
     </el-form-item>
 </template>
 
@@ -43,6 +43,14 @@ export default {
         isEdit: {
             type: Boolean,
             default: false
+        },
+        isFilter: {
+            type: Boolean,
+            default: false
+        },
+        itemValue: {
+            type: Object,
+            default: {}
         }
     },
     watch: {
@@ -53,12 +61,18 @@ export default {
                 this.setListener();
             },
             immediate: true
-        }
+        },
+        /* itemValue: {
+            handler(obj) {
+                console.log('watch form-item itemValue', obj);
+            },
+            immediate: true
+        } */
     },
     computed: {
-        ...mapState('forms', ['currForms']),
+        ...mapState('forms', ['formValue']),
         Rules() {
-            if (this.isEdit || !this.item.required || this.item.isFilter) {
+            if (this.isEdit || !this.item.required || this.isFilter) {
                 return null;
             }
             const rules = this.item.rules;
@@ -67,11 +81,29 @@ export default {
             rules.forEach(rule => {
                 if (rule.sql) {
                     const validator = (rule2, value, callback) => {
-                        this.$alert('需要接入后台API:' + rule.sql, '后台API验证', {
-                            confirmButtonText: '确定'
+                        let obj = {};
+                        //console.log('formValue', this.formValue[this.item.name]);
+                        // 如果值等于原值
+                        if (this.formValue[this.item.name] == this.myValue) {
+                            callback();
+                            return;
+                        }
+                        obj[this.item.name] = this.myValue; //{"$ne":this.myValue};
+                        let conditions = {
+                            type: 'checkValidator',
+                            collectionName: this.item.table,
+                            valid: rule.sql,
+                            data: obj
+                        }
+                        this.$axios.$post('mock/db', { data: conditions }).then(data => {
+                            if (data) {
+                                callback(new Error('验证失败！值:"' + this.myValue + '"已存在'));
+                            } else {
+                                callback();
+                            }
                         });
                     }
-                    R.push({ validator, message: rule.message, trigger: 'blur' });
+                    R.push({ validator, trigger: (this.item.component == 'sam-input' || this.item.component == 'sam-number') ? 'blur' : 'change' });
                 } else {
                     R.push(rule);
                 }
@@ -92,14 +124,24 @@ export default {
             children: "children"
         },
         listenerOn: [],
+        myValue: ''
     }),
     methods: {
+        setValue(val) {
+            this.myValue = val;
+        },
+
         async setOpts(flag) {
             this.ajaxOptions = [];
+
+            /* if (this.itemValue.val && this.item.level) {
+                this.item.level = 0;
+            }
+            console.log('setOpts', this.item, this.itemValue.val); */
+
             if (this.item.options && this.item.options.length) {
                 this.ajaxOptions = _.clone(this.item.options);
             } else if (this.item.optionsUrl && !this.item.level) {
-                //debugger
                 let conditon = {
                     type: 'listData',
                     collectionName: this.item.optionsUrl.table,
@@ -107,12 +149,30 @@ export default {
                 }
                 let res = await this.$axios.$post('mock/db', { data: conditon });
                 if (res && res.list.length) {
-                    this.ajaxOptions = res.list.map(item => {
-                        return {
-                            value: item[this.item.optionsUrl.value],
-                            label: item[this.item.optionsUrl.label]
+                    // 如果是级联的
+                    if (this.item.component == 'sam-cascader') {
+                        let lists = res.list.map(item => {
+                            return {
+                                id: item.id,
+                                pid: item.pid,
+                                value: item[this.item.optionsUrl.value],
+                                label: item[this.item.optionsUrl.label]
+                            }
+                        })
+                        this.ajaxOptions = this.$global.toTree(lists);
+                    } else {
+                        this.ajaxOptions = res.list.map(item => {
+                            return {
+                                value: item[this.item.optionsUrl.value],
+                                label: item[this.item.optionsUrl.label]
+                            }
+                        });
+
+                        if (this.item.emit && this.itemValue.val) {
+                            this.setEmit();
                         }
-                    });
+
+                    }
                 }
             } else if (this.item.optionsConst) {
                 if (opts[this.item.optionsConst]) {
@@ -120,6 +180,12 @@ export default {
                 }
             }
             //console.log('this.ajaxOptions', this.ajaxOptions);
+        },
+        setEmit() {
+            let emit = this.item.emit;
+            for (let i = 0; i < emit.length; i++) {
+                $bus.$emit(emit[i], this.itemValue.val);
+            }
         },
         setListener() {
             if (this.item.on) {

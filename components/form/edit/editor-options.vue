@@ -20,7 +20,7 @@
             </el-row>
             <span v-else>{{opt.value}}/{{opt.label}}</span>
             <el-button-group v-if="!isEdit">
-                <el-button size="mini" round icon="my-icon-power-off" :title="opt.disabled?'不可选':'可选'" :type="opt.disabled?'info':''" @click="handleDisabled(i, opt)" />
+                <el-button size="mini" round icon="el-icon-open" :title="opt.disabled?'不可选':'可选'" :type="opt.disabled?'info':''" @click="handleDisabled(i, opt)" />
                 <el-button size="mini" round icon="el-icon-edit" @click="handlePreEdit(i, opt)" />
                 <el-button size="mini" round icon="el-icon-delete" @click="handleRemove(i)" />
             </el-button-group>

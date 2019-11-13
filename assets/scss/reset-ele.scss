@@ -45,3 +45,19 @@
         max-height: calc(100% - 45px);
     }
 }
+
+.el-drawer {
+    .el-drawer__header {
+        margin: 0;
+        padding: 0 15px;
+        background-color: #dcebf7;
+        height: 40px;
+        box-sizing: border-box;
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    /* .el-drawer__body {
+        padding: 15px;
+    } */
+}

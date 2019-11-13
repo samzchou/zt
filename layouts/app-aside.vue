@@ -8,12 +8,12 @@
                 <el-menu :collapse="!sidebar.opened" :default-active="activeIndex">
                     <el-submenu v-for="(menu,idx) in menuList" :key="idx" :index="String(idx)">
                         <template slot="title">
-                            <i :class="menu.icon" v-if="menu.icon" />
-                            <span slot="title">{{menu.label}}</span>
+                            <i :class="'my-icon-'+menu.icon" v-if="menu.icon" />
+                            <span slot="title">{{menu.title}}</span>
                         </template>
-                        <el-menu-item v-for="(subMenu,sidx) in menu.children" :key="idx+'-'+sidx" :index="idx+'-'+sidx" @click="goPath(subMenu.path, idx+'-'+sidx)">
-                            <i :class="subMenu.icon" v-if="subMenu.icon" />
-                            <span>{{subMenu.label}}</span>
+                        <el-menu-item v-for="(subMenu,sidx) in menu.children" :key="idx+'-'+sidx" :index="idx+'-'+sidx" @click="goPath(subMenu.page_url, idx+'-'+sidx)">
+                            <i :class="'my-icon-'+subMenu.icon" v-if="subMenu.icon" />
+                            <span>{{subMenu.title}}</span>
                         </el-menu-item>
                     </el-submenu>
                 </el-menu>
@@ -23,35 +23,38 @@
 </template>
 
 <script>
-import {
-    mapState,
-    mapMutations
-} from 'vuex';
+import { mapState, mapMutations, mapActions } from 'vuex';
 export default {
-    watch: {
-        '$route': 'setRouter'
-    },
     computed: {
-        ...mapState('admin', ['sidebar', 'navMenu']),
+        ...mapState(['sidebar', 'serviceList', 'user']),
     },
-
+    watch: {
+        '$route': 'setRouter',
+        serviceList: {
+            handler(list) {
+                console.log('serviceList', list)
+                this.menuList = _.cloneDeep(list); //this.$global.toTree([...list]);
+            },
+            immediate: true
+        }
+    },
     data: () => ({
         isCollapse: false,
         menuList: [],
         activeIndex: "",
     }),
     methods: {
-        //...mapMutations(['UPDATE_PAGETITLE']),
+        ...mapActions(['ASYNC_GET_SERVICE']),
         setRouter() {
             this.activeIndex = '';
             let pathArr = this.$route.path.split('/');
             if (!pathArr[0]) {
                 pathArr.splice(0, 1);
             }
-            let pIndex = _.findIndex(this.navMenu, { "name": pathArr[0] });
+            let pIndex = _.findIndex(this.menuList, { "name": pathArr[0] });
             if (!!~pIndex) {
                 this.activeIndex += pIndex;
-                let menu = this.navMenu[pIndex];
+                let menu = this.menuList[pIndex];
                 if (menu.children && menu.children.length) {
                     let childIndex = _.findIndex(menu.children, { "name": pathArr[1] });
                     if (!!~childIndex) {
@@ -62,12 +65,11 @@ export default {
             console.log('this.activeIndex', this.activeIndex)
         },
         goPath(path, index) {
-            //this.UPDATE_PAGETITLE(index);
             this.$router.push(path);
         }
     },
     beforeMount() {
-        this.menuList = this.navMenu;
+        this.ASYNC_GET_SERVICE();
     },
     mounted() {
         this.setRouter();

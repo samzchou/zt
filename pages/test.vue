@@ -1,31 +1,11 @@
 <template>
-    <el-form size="small" :model="formField" ref="dynamicValidateForm" label-width="100px" class="demo-dynamic">
-        <el-form-item label="年龄" prop="age" :rules="[
-      { required: true, message: '年龄不能为空'},
-      { type: 'number', message: '年龄必须为数字值'}
-    ]">
-            <el-input type="age" v-model.number="formField.age" autocomplete="off"></el-input>
-        </el-form-item>
-        <!-- <el-row :gutter="30">
-            <draggable>
-                <el-col :span="3" v-for="item in itemList" :key="item.name">
-                    <el-form-item :label="item.label" :prop="item.name" :rules="item.rules">
-                        <component :is="item.component" size="mini" :isEdit="false" :data="item" />
-                    </el-form-item>
-                </el-col>
-            </draggable>
-        </el-row> -->
-        <el-form-item label="area" prop="area">
-            <el-cascader v-model="formField.area" :options="options" expand-trigger="hover" filterable clearable @change="handleChange" :rules="[
-      { type: 'array', required: true, message: '请输入邮箱地址', trigger: 'change' }
-    ]" />
-        </el-form-item>
-        <el-form-item>
-            <el-button type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
-            <el-button @click="addDomain">新增域名</el-button>
-            <el-button @click="resetForm('dynamicValidateForm')">重置</el-button>
-        </el-form-item>
-    </el-form>
+    <section>
+        <div>
+            <el-input v-model="msg" />
+            <el-button type="primary" @click="sendMsg">发送socket消息</el-button>
+        </div>
+        <div></div>
+    </section>
 </template>
 
 <script>
@@ -34,6 +14,9 @@ import {
     mapState, mapMutations, mapActions
 } from 'vuex';
 import opts from '~/config/options';
+
+import WebSocket from '~/util/webSocket';
+
 export default {
     components: {
         Draggable,
@@ -46,68 +29,39 @@ export default {
     },
     data() {
         return {
-            itemList: [],
-            formField: {
-                area: "",
-                age: ''
-            },
-            value: [],
-            options: [],
-            formRule: {
-                area: [
-                    { type: 'array', required: true, message: 'eurei', trigger: "change" }
-                ]
-            }
+            socketIO: null,
+            msg: ""
         };
     },
     methods: {
-        handleChange() {
-            console.log('handleChange', this.formField)
+        sendMsg() {
+            this.socketIO.send({ event: 'todo', rp: this.msg })
         },
-        submitForm(formName) {
-            this.$refs[formName].validate((valid) => {
-                if (valid) {
-                    alert('submit!');
-                } else {
-                    console.log('error submit!!');
-                    return false;
+        initWebSocket() {
+            var array = [1, 2, 3, 4, 6];
+            array.splice(0, 1);
+            console.log('array', array);
+            this.socketIO = new WebSocket();
+            this.socketIO.onmessage((data) => {
+                console.log('%c%s', 'color:green;', '客户端接收到消息：' + JSON.stringify(data));
+                if (typeof (this[data.topic]) != "function" || !data) {
+                    return;
                 }
+                this[data.topic](data);
             });
         },
-        resetForm(formName) {
-            this.$refs[formName].resetFields();
-        },
-        removeDomain(item) {
-            /* var index = this.dynamicValidateForm.domains.indexOf(item)
-            if (index !== -1) {
-                this.dynamicValidateForm.domains.splice(index, 1)
-            } */
-        },
-        addDomain() {
-            /* this.dynamicValidateForm.domains.push({
-                value: '',
-                key: Date.now()
-            }); */
-        },
-        setFormData() {
-            /* let currForms = this.$storage.get('adminForms');
-            console.log('this.formDatasss', currForms);
-            if (currForms.itemList.length) {
-                currForms.itemList.forEach(item => {
-                    this.itemList = _.concat(currForms.itemList, item.children);
-                    item.children.forEach(c => {
-                        this.formField[c.name] = "";
-                    })
-                });
-            }
-            console.log('test.formDataEnd', this.formField); */
-        },
     },
+
     mounted() {
         //this.setFormData();
         this.$nextTick(() => {
-            this.options = opts['citys'];
-        })
-    }
+            //this.options = opts['citys'];
+        });
+        this.initWebSocket();
+    },
+    beforeDestroy() {
+        this.socketIO = null;
+    },
+
 }
 </script>
