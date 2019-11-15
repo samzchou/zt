@@ -24,12 +24,13 @@
 import {
     mapState, mapMutations
 } from 'vuex';
-//import WebSocket from '~/util/webSocket';
+import WebSocket from '~/util/webSocket';
 export default {
     watch: {
         '$route': 'setRouter'
     },
     data: () => ({
+		socketIO: null,
         pageTitle: [],
     }),
     computed: {
@@ -72,11 +73,28 @@ export default {
                 this.$router.push('/login');
             }).catch(() => { });
         },
+		initWebSocket() {
+            this.socketIO = new WebSocket();
+            this.socketIO.onmessage(data => {
+                console.log(
+                    '%c%s',
+                    'color:green;',
+                    '客户端接收到消息=>：' + JSON.stringify(data)
+                )
+                if (typeof this[data.topic] != 'function' || !data) {
+                    return
+                }
+                this[data.topic](data)
+            })
+        }
 
     },
     mounted() {
         this.setRouter();
-        //this.initWebSocket();
+        this.initWebSocket();
+    },
+	beforeDestroy() {
+        this.socketIO = null;
     }
 }
 </script>

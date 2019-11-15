@@ -28,7 +28,7 @@
                 </div>
                 <!--  <div v-else class="empty">请选择过滤项目</div> -->
             </div>
-            <div class="tables" v-if="tableData.length">
+            <div class="tables" v-if="tableData.length && formData.content && formData.content.itemList">
                 <el-table size="mini" :data="tableData" border max-height="500" :row-key="isTree?'id':''" :tree-props="treeProps" style="width:100%">
                     <el-table-column type="index" label="序号" fixed="left" align="center" width="50">
                         <template slot-scope="scope">
@@ -65,12 +65,16 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import samForm from '~/components/form';
 import dataUtil from '~/util/data_util';
 import dataOptions from '~/config/options';
 export default {
     components: {
         samForm
+    },
+    computed: {
+        ...mapState(['checkArr']),
     },
     props: {
         data: {
@@ -268,11 +272,11 @@ export default {
                                 str = data ? data[key] : '';
                             } else if (_.isArray(str)) {
                                 let dd = [];
-                                for (let i = 0; i < str.length; i++) {
+                                /* for (let i = 0; i < str.length; i++) {
                                     let data = _.find(collData, { "id": str[i] });
                                     let key = item.optionsUrl.label;
                                     dd.push(data[key]);
-                                }
+                                } */
                                 str = dd.join(",");
                             }
                         }

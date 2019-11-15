@@ -1,7 +1,18 @@
 /* eslint-disable */
 'use strict';
 export default {
-    nation: [{
+	wfType:[
+		{
+			value: 1,
+            label: '时间钟补卡申请'
+		},
+		{
+			value: 2,
+            label: '其他'
+		}
+	],
+    nation: [
+		{
             value: 1,
             label: '汉族'
         },
@@ -225,7 +236,6 @@ export default {
             value: 56,
             label: '基诺族'
         },
-
     ],
     citys: [{
             value: 1,

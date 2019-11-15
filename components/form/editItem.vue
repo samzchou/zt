@@ -21,6 +21,7 @@ export default {
         "sam-radio": resolve => require(["./edit/sam-radio.vue"], resolve),
         "sam-select": resolve => require(["./edit/sam-select.vue"], resolve),
         "sam-cascader": resolve => require(["./edit/sam-cascader.vue"], resolve),
+        "sam-switch": resolve => require(["./edit/sam-switch.vue"], resolve),
     },
     computed: {
         ...mapState('forms', ['currComponent']),

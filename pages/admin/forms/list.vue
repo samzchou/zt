@@ -158,7 +158,7 @@ export default {
                 aggregate: [
                     {
                         $lookup: {
-                            from: "user",
+                            from: "employee",
                             localField: "create_eid",
                             foreignField: "id",
                             as: "user"
@@ -171,7 +171,7 @@ export default {
                         }
                     },
                     {
-                        $addFields: { userName: "$user.name" }
+                        $addFields: { userName: "$user.e_name" }
                     },
                     { $sort: { id: 1 } }
                 ]

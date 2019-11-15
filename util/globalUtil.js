@@ -280,5 +280,5 @@ export default {
             return temp + 'GB';
         }
     },
-
+	
 }

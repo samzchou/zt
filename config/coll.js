@@ -14,6 +14,36 @@ export default {
             "default": 0
         }
     },
+	/*----------权限角色数据-----------*/
+    roles: {
+        "id": {
+            "name": "id",
+            "type": "Number",
+            "hide": true,
+            "default": 0
+        },
+        "collInfo": {
+            "name": "roles",
+            "label": "角色配置",
+			"hide": true,
+            "default": ""
+        },
+        "name": {
+            "name": "name",
+            "type": "String",
+            "component": "sam-select",
+            "required": true,
+            "default": "",
+            "label": "角色名称"
+        },
+        "content": {
+            "name": "content",
+            "type": "Object",
+			"hide": true,
+            "default": "",
+            "label": "数据内容JSON"
+        }
+    },
     /*----------表单配置数据-----------*/
     formList: {
         "id": {
@@ -137,46 +167,6 @@ export default {
             "label": "部门名称"
         }
     },
-    /*----------系统用户表-----------*/
-    user: {
-        "id": {
-            "name": "id",
-            "type": "Number",
-            "hide": true,
-            "default": 0
-        },
-        "collInfo": {
-            "name": "user",
-            "label": "系统用户",
-            "type": "String",
-            "hide": true,
-            "default": ""
-        },
-        "username": {
-            "name": "username",
-            "type": "String",
-            "component": "sam-input",
-            "cptype": "text",
-            "required": true,
-            "default": "",
-            "label": "用户名"
-        },
-        "password": {
-            "name": "password",
-            "type": "String",
-            "component": "sam-input",
-            "cptype": "password",
-            "required": true,
-            "default": "123456",
-            "label": "密码"
-        },
-        "createDate": {
-            "name": "createDate",
-            "type": "Number",
-            "default": new Date().getTime(),
-            "label": "创建时间"
-        }
-    },
     /*----------员工信息表-----------*/
     employee: {
         "id": {
@@ -222,15 +212,14 @@ export default {
         },
         "roles": {
             "name": "roles",
-            "label": "操作权限",
+            "label": "角色权限",
             "component": "sam-select",
-            "multiple": true,
             "optionsUrl": {
                 "table": "roles",
-                "label": "title",
+                "label": "name",
                 "value": "id"
             },
-            "default": []
+            "default": 0
         },
         "e_name": {
             "name": "e_name",
@@ -490,6 +479,15 @@ export default {
             "on": ["e_department"],
             "default": 0
         },
+		"is_leader": {
+            "name": "is_leader",
+            "label": "是否主管领导",
+            "type": "Boolean",
+            "required": true,
+            "component": "sam-switch",
+			"value": false,
+            "default": false
+        },
         "e_position": {
             "name": "e_position",
             "label": "岗位",
@@ -612,11 +610,11 @@ export default {
         "e_social_security_office": {
             "name": "e_social_security_office",
             "label": "社保所属",
-            "type": "Number",
+            "type": "Array",
             "required": true,
             "component": "sam-cascader",
             "optionsConst": "citys",
-            "default": 2
+            "default": []
         },
         "e_employee_status": {
             "name": "e_employee_status",

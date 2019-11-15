@@ -56,21 +56,21 @@ module.exports = {
             "label": "对应图标"
         }
     },
-    /*----------权限数据-----------*/
+    /*----------角色权限数据-----------*/
     roles: {
         "id": {
             "type": Number,
             "default": 0
         },
-        "pageid": {
-            "type": Array,
-            "default": [],
-            "label": "对应权限的页面ID"
-        },
-        "title": {
+        "name": {
             "type": String,
             "default": "",
-            "label": "权限命名"
+            "label": "角色名称"
+        },
+        "content": {
+            "type": Array,
+            "default": [],
+            "label": "内容"
         }
     },
     /*----------收件箱-----------*/
@@ -221,8 +221,8 @@ module.exports = {
         },
         "roles": {
             "label": "操作权限",
-            "type": Array,
-            "default": []
+            "type": Number,
+            "default": 0
         },
         "e_name": {
             "label": "员工姓名",
@@ -314,6 +314,11 @@ module.exports = {
             "type": Number,
             "default": 0
         },
+        "is_leader": {
+            "label": "是否主管领导",
+            "type": "Boolean",
+            "default": false
+        },
         "e_position": {
             "label": "岗位",
             "type": Number,
@@ -401,12 +406,77 @@ module.exports = {
             "default": new Date().getTime(),
             "label": "当前周日时间"
         },
+        "apply": {
+            "type": Array,
+            "default": [],
+            "label": "补卡申请"
+        },
         "content": {
             "type": Object,
             "default": "",
             "label": "数据内容JSON"
         }
     },
+    /*----------流程-----------*/
+    workflow: {
+        "id": {
+            "type": Number,
+            "default": 0
+        },
+        "state": {
+            "type": Number,
+            "default": 1,
+            "label": "状态"
+        },
+        "createDate": {
+            "type": Number,
+            "default": new Date().getTime(),
+            "label": "创建时间"
+        }
+    },
+    /*----------消息日志表-----------*/
+    inbox: {
+        "id": {
+            "type": Number,
+            "default": 0
+        },
+        "fid": {
+            "type": Number,
+            "default": 0,
+            "label": "消息源ID"
+        },
+		"isRead": {
+            "label": "是否已阅读",
+            "type": "Boolean",
+            "default": false
+        },
+		"wfType": {
+            "type": Number,
+            "default": 0,
+            "label": "消息类型"
+        },
+		"fromuserId": {
+            "type": Number,
+            "default": 0,
+            "label": "用户ID"
+        },
+        "touserId": {
+            "type": Array,
+            "default": [],
+            "label": "用户ID"
+        },
+        "content": {
+            "type": String,
+            "default": "",
+            "label": "具体内容"
+        },
+        "createDate": {
+            "type": Number,
+            "default": new Date().getTime(),
+            "label": "创建时间"
+        }
+    },
+
     /*----------图纸信息表-----------*/
     blueprint: {
         "id": {

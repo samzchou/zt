@@ -62,7 +62,7 @@ export default {
                     }
                 }
             }
-            console.log('this.activeIndex', this.activeIndex)
+            //console.log('this.activeIndex', this.activeIndex)
         },
         goPath(path, index) {
             this.$router.push(path);

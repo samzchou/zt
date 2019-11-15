@@ -376,8 +376,9 @@ const dbFun = {
     async getData(params) {
         let tn = params.collectionName;
         let data = params.data;
+        let column = params.column || {};
 
-        let result = await mongoDB[tn].findOne(data);
+        let result = await mongoDB[tn].findOne(data, column);
         let response = {
             success: result ? true : false,
             msgDesc: result ? null : '没有可查询的数据',
@@ -434,8 +435,9 @@ const dbFun = {
             expiresIn: 60 * 60 * 1 // 1小时过期
         });
         data.password = this._setHash(data.password);
+        let myleader;
         //console.log('data.password', data.password)
-        let result = await mongoDB[tn].findOne(data);
+        let result = await mongoDB[tn].findOne(data, { "id": 1, "e_name": 1, "username": 1, "e_department": 1 });
         if (result) {
             result.token = token;
             this.updateData({
@@ -445,6 +447,9 @@ const dbFun = {
                     "token": token
                 }
             });
+            // 获取我的上级主管
+            /* let cn = { "e_department": result.e_department, "is_leader": true };
+            myleader = await mongoDB[tn].find(cn, { "id": 1, "e_name": 1 }); */
         }
         return {
             success: result ? true : false,

@@ -15,8 +15,10 @@
     "vetur.format.defaultFormatter.html": "js-beautify-html",
     "vetur.format.defaultFormatter.css": "prettier",
     "vetur.format.defaultFormatter.scss": "prettier",
-    "vetur.format.defaultFormatter.js": "vscode-typescript",
     "vetur.format.options.tabSize": 4,
+    "beautify.config": {
+        "brace_style": "collapse,preserve-inline"
+    },
     // 显示 markdown 中英文切换时产生的特殊字符
     "editor.renderControlCharacters": true,
     // 设置 eslint 保存时自动修复
@@ -41,10 +43,11 @@
             "semi": false
         },
         "js-beautify-html": {
-            "wrap_attributes": "auto"
+            "wrap_attributes": "auto",
+            "end_with_newline": false
         },
         "prettyhtml": {
-            "printWidth": 100,
+            //"printWidth": 100,
             "singleQuote": false,
             "wrapAttributes": false,
             "sortAttributes": false
@@ -56,5 +59,15 @@
     "html.format.endWithNewline": true,
     "prettier.tabWidth": 4,
     "explorer.confirmDelete": false,
-    "editor.wordWrap": "on"
+    "editor.wordWrap": "on",
+    "vetur.format.defaultFormatter.js": "vscode-typescript",
+    "files.exclude": {
+        "**/.eslintrc*": true,
+        "**/.git*": true,
+        "**/.nuxt": true,
+        "**/node_modules": true
+    },
+    "editor.quickSuggestions": {
+        "strings": true
+    }
 }

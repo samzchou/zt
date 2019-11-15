@@ -10,6 +10,7 @@
                 </div>
             </div>
         </div>
+        <!--工作时间块-->
         <div class="time-block" v-for="(block,idx) in blockList" :key="idx" :class="{'active':activeIndex==idx}" v-clickoutside="handleClickOutside" @click="editMyBlock(idx)" :style="{'top':block.rect.top+'px','height':block.rect.height+'px'}">
             <div class="title">
                 <span>上班</span>
@@ -56,7 +57,6 @@ export default {
                             let conditions = this.updatePosition(this.currBlock);
                             this.currBlock = Object.assign({}, this.currBlock, conditions);
                             this.$set(this.blockList, this.activeIndex, this.currBlock);
-                            //this.$emit('updateList', this.blockList, this.colIndex);
                         }
                     }
                 }

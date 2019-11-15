@@ -32,12 +32,13 @@ export default {
         CountTo, chartWorktimes
     },
     data: () => ({
-        panelList: [
+        panelList: [],
+        /* panelList: [
             { label: "员工数", "name": "userlist", path:"/userinfo/list", icon: "el-icon-user", color: "", endVal: 280, duration: 1200 },
             { label: "本周工时合计", "name": "userlist", path:"/work/time", icon: "el-icon-timer blue", endVal: 54000, duration: 1200 },
             { label: "我的代办事项", "name": "userlist", path:"/work/todo", icon: "el-icon-suitcase red", endVal: 20, duration: 3000 },
             { label: "信息中心", "name": "userlist", path:"/infomation", icon: "el-icon-chat-line-square orange", endVal: 130, duration: 3000 }
-        ]
+        ] */
     }),
     computed: {
         //...mapState(['weekArray', 'timeutilHeight', 'locakMinutes', 'editIndex', 'editBlock', 'isEditTime']),

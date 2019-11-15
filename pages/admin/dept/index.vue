@@ -5,12 +5,14 @@
 </template>
 
 <script>
+
 import samForm from '~/components/form';
 import pageData from '~/components/page/data';
 export default {
     components: {
         samForm, pageData
     },
+
     data: () => ({
         formData: {
             title: "机构部门",

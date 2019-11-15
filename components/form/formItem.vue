@@ -18,6 +18,8 @@
         </el-select>
         <!--级联-->
         <el-cascader v-else-if="item.component==='sam-cascader'" :options="ajaxOptions" :props="defaultPtops" v-bind="$attrs" v-on="$listeners" :disabled="item.disabled" :placeholder="item.placeholder||''" clearable @change="setValue" />
+        <!-- 开关 -->
+        <el-switch v-else-if="item.component==='sam-switch'" v-bind="$attrs" v-on="$listeners" :disabled="item.disabled"/>
     </el-form-item>
 </template>
 

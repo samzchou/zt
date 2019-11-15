@@ -42,7 +42,6 @@ export default {
         },
         collectionData: {
             handler(obj) {
-                /* console.log('collectionData', obj); */
                 if (!_.isEmpty(obj)) {
                     this.resetConst();
                     this.isInit = true;

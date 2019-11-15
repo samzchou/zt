@@ -36,8 +36,8 @@ export default {
     data: () => ({
         isLogin: false,
         ruleForm: {
-            username: 'admin',
-            password: 'admin123456'
+            username: 'zhangsan',
+            password: '123456'
         },
         rules: {
             username: [
