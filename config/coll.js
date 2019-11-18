@@ -126,47 +126,7 @@ export default {
             "label": "创建时间"
         }
     },
-    /*----------组织部门表-----------*/
-    department: {
-        "id": {
-            "name": "id",
-            "type": "Number",
-            "hide": true,
-            "default": 0
-        },
-        "collInfo": {
-            "name": "department",
-            "label": "组织部门",
-            "type": "String",
-            "hide": true,
-            "default": ""
-        },
-        "dept_parentid": {
-            "name": "dept_parentid",
-            "label": "上级部门",
-            "type": "Number",
-            "component": "sam-select",
-            "optionsUrl": {
-                "table": "department",
-                "params": {
-                    "dept_parentid": 0
-                },
-                "label": "dept_name",
-                "value": "id"
-            },
-            "level": 0,
-            "default": 0
-        },
-        "dept_name": {
-            "name": "dept_name",
-            "type": "String",
-            "component": "sam-input",
-            "cptype": "text",
-            "required": true,
-            "default": "",
-            "label": "部门名称"
-        }
-    },
+    
     /*----------员工信息表-----------*/
     employee: {
         "id": {
@@ -443,50 +403,40 @@ export default {
             "cptype": "text",
             "default": ""
         },
-        "e_superior_department": {
-            "name": "e_superior_department",
-            "label": "上级部门",
-            "type": "Number",
-            "required": true,
-            "component": "sam-select",
-            "optionsUrl": {
-                "table": "department",
-                "params": {
-                    "dept_parentid": 0
-                },
-                "label": "dept_name",
-                "value": "id"
-            },
-            "level": 0,
-            "emit": ["e_department"],
-            "default": 0
-        },
         "e_department": {
             "name": "e_department",
             "label": "所属部门",
-            "type": "Number",
+            "type": "Array",
             "required": true,
-            "component": "sam-select",
+            "component": "sam-cascader",
             "optionsUrl": {
-                "table": "department",
-                "params": {
-                    "dept_parentid": 0
-                },
-                "label": "dept_name",
-                "value": "id"
-            },
-            "level": 1,
-            "on": ["e_department"],
-            "default": 0
+				"level":1,
+				"table":"department",
+				"pid":"dept_parentid",
+				"value":"id",
+				"label":"dept_name",
+				"params":{
+					"disabled":false
+				}
+			},
+            "default": []
         },
 		"is_leader": {
             "name": "is_leader",
             "label": "是否主管领导",
-            "type": "Boolean",
+            "type": "Number",
             "required": true,
-            "component": "sam-switch",
-			"value": false,
-            "default": false
+            "component": "sam-select",
+            "options": [{
+                    "label": "否",
+                    "value": 0
+                },
+                {
+                    "label": "是",
+                    "value": 1
+                }
+            ],
+            "default": 0
         },
         "e_position": {
             "name": "e_position",
@@ -638,50 +588,7 @@ export default {
             "default": 1
         }
     },
-    /*----------时间钟-----------*/
-    timeBlock: {
-        "id": {
-            "name": "id",
-            "type": "Number",
-            "hide": true,
-            "default": 0
-        },
-        "collInfo": {
-            "name": "timeBlock",
-            "label": "时间钟",
-            "type": "String",
-            "hide": true,
-            "default": ""
-        },
-        "userId": {
-            "name": "userId",
-            "type": "Number",
-            "default": 0,
-            "label": "用户ID"
-        },
-        "startdate": {
-            "name": "startdate",
-            "type": "Number",
-            "default": new Date().getTime(),
-            "component": "sam-date",
-            "cptype": "date",
-            "label": "当前周一时间"
-        },
-        "enddate": {
-            "name": "enddate",
-            "type": "Number",
-            "default": new Date().getTime(),
-            "component": "sam-date",
-            "cptype": "date",
-            "label": "当前周日时间"
-        },
-        "content": {
-            "name": "content",
-            "type": "Object",
-            "default": "",
-            "label": "数据内容JSON"
-        }
-    },
+    
     /*----------图纸信息表-----------*/
     blueprint: {
         "id": {

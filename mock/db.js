@@ -343,7 +343,8 @@ const dbFun = {
         }
         let response = {
             success: result ? true : false,
-            msgDesc: result ? '数据更新成功' : '数据更新失败'
+            msgDesc: result ? '数据更新成功' : '数据更新失败',
+            response: result ? true : false
         }
 
         if (params.notNotice && response.success) {
@@ -383,6 +384,10 @@ const dbFun = {
             success: result ? true : false,
             msgDesc: result ? null : '没有可查询的数据',
             response: result
+        }
+		if (params.notNotice) {
+			response.success = true;
+            delete response.msgDesc;
         }
         return response;
     },
@@ -436,7 +441,6 @@ const dbFun = {
         });
         data.password = this._setHash(data.password);
         let myleader;
-        //console.log('data.password', data.password)
         let result = await mongoDB[tn].findOne(data, { "id": 1, "e_name": 1, "username": 1, "e_department": 1 });
         if (result) {
             result.token = token;
@@ -447,9 +451,6 @@ const dbFun = {
                     "token": token
                 }
             });
-            // 获取我的上级主管
-            /* let cn = { "e_department": result.e_department, "is_leader": true };
-            myleader = await mongoDB[tn].find(cn, { "id": 1, "e_name": 1 }); */
         }
         return {
             success: result ? true : false,
@@ -459,6 +460,12 @@ const dbFun = {
     },
     async logout() {
 
+    },
+    async workApply() {
+        return {
+            success: true,
+            response: new Date().getTime()
+        }
     },
     // 数据校验
     async checkValidator(params) {

@@ -15,6 +15,12 @@ export default {
                     "icon": "el-icon-document-copy",
                     "path": "/admin/data/meta",
                     "name": "meta"
+                },
+                {
+                    "label": "休假日数据",
+                    "icon": "el-icon-document-copy",
+                    "path": "/admin/holiday",
+                    "name": "holiday"
                 }
             ]
         },
@@ -57,20 +63,20 @@ export default {
             "label": "系统管理",
             "icon": "el-icon-set-up",
             "children": [{
-                    "label": "机构部门",
+                    "label": "组织机构",
                     "icon": "el-icon-document-copy",
-                    "path": "/admin/dept"
+                    "path": "/admin/dept/orgStruct"
                 },
                 {
-                    "label": "权限",
+                    "label": "菜单及服务",
+                    "icon": "el-icon-document-copy",
+                    "path": "/admin/service"
+                },
+                {
+                    "label": "角色/权限",
                     "icon": "el-icon-document-copy",
                     "path": "/admin/roles"
                 },
-				{
-                    "label": "菜单导航",
-                    "icon": "el-icon-document-copy",
-                    "path": "/admin/service"
-                }
             ]
         }
     ]

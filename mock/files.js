@@ -7,31 +7,47 @@ const path = require('path');
 
 const dbFun = {
     getFullPath(fielpath) {
-        return path.resolve(__dirname, fielpath);
+        return path.resolve(__dirname, "../config/opts/" + fielpath);
     },
 
-    writeFile(params) {
-        let res = '';
-        let fileFullName = this.getFullPath("../config/db/collections.js");
+    async writeFile(params) {
+		let opts = {
+			cwd: __dirname,
+			encoding: 'utf8',
+			stdio: [process.stdin, process.stdout, process.stderr]
+		}
+        let fileFullName = this.getFullPath(params.path); //"../config/db/collections.js"
         try {
-            fs.writeFileSync('c:\\demo\a.txt', new Date());
+            fs.writeFileSync(fileFullName, params.data, opts); //c:\\demo\a.txt
+			return {
+				success: true,
+				response: true
+			}
         } catch (error) {
-            // 文件夹不存在，或者权限错误
+            // 文件夹不存在，或者权限错误(须可读写)
             console.log(error);
-        }
-        return {
-            success: true,
-            response: 111
+			return {
+				success: false,
+				msgDesc: '保存数据失败！'
+			}
         }
     },
-    openFile(params) {
-        let fileFullName = this.getFullPath("../config/db/collections.js");
-        let filedata = fs.readFileSync(fileFullName, 'utf-8');
-        console.log('openFile', filedata);
-        return {
-            success: true,
-            response: filedata
-        }
+    async openFile(params) {
+        let fileFullName = this.getFullPath(params.path);
+		try{
+			let filedata = fs.readFileSync(fileFullName, 'utf-8');
+			return {
+				success: true,
+				response: filedata
+			}
+		}catch (error) {
+			console.log(error);
+			return {
+				success: true,
+				response: false
+			}
+		}
+        
     }
 }
 

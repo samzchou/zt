@@ -15,11 +15,12 @@ export const state = () => ({
     pageTitle: '主页',
 	serviceList:[],
 	collectionData:{},
+	holidayType:[{label:'工作日',value:'0'},{label:'休息日',value:'1'},{label:'节假日',value:'2'}], 
 	checkArr: [ 
 		{ label: '查看', value: 1 }, { label: '新增', value: 2 }, { label: '修改', value: 3 }, { label: '删除', value: 4 }, { label: '批量处理', value: 5 }
 	],
 	wfType:[
-		{ label: '时间钟审批', value: 1, table:'timeBlock' }, { label: '站内消息', value: 2, table:'message' }, { label: '其他', value: 3 }
+		{ label: '时间钟补填审批', value: 1, table:'timeBlock' }, { label: '站内消息', value: 2, table:'message' }, { label: '其他', value: 3 }
 	],
 	stateType:[
 		{ label: '已申请', value: 1 }, { label: '已退回', value: 2 }, { label: '处理中', value: 3 }, { label: '已完成', value: 4 }, { label: '已撤回', value: 5 }
@@ -32,7 +33,6 @@ export const mutations = {
     },
     UPDATE_USER(state, data) {
         state.user = data;
-		console.log('UPDATE_USER', data);
         if (!process.server) {
             this.app.$storage.set('user', state.user);
         }
@@ -43,11 +43,9 @@ export const mutations = {
         state.sidebar.withoutAnimation = false;
     },
 	UPDATE_SERVICE(state, list){
-		//state.serviceList = list;
 		state.serviceList = dataUtil.toTree(list);
 	},
 	UPDATE_COLLECTIONS_DATA(state, obj){
-		//console.log("service",obj.service)
 		state.collectionData = obj;
 	}
 }
@@ -66,11 +64,9 @@ export const actions = {
 					column:{ "id": 1, "e_name": 1, "username": 1, "e_department": 1, "leader": 1 }
                 }
             });
-			//console.log('nuxtServerInit', user);
 			if(user){
 				commit('UPDATE_USER', user);
 			}
-            
         }
 		// 系统常用值集
 		let obj = {}, names = ['department', 'service', 'roles'];
@@ -85,7 +81,7 @@ export const actions = {
 			}
 		}
 		//console.log('obj', obj);
-		commit('UPDATE_COLLECTIONS_DATA', obj);
+		commit('UPDATE_COLLECTIONS_DATA', obj);		
     },
     async ASYNC_GET_SERVICE({ commit }, lang) {
         let res = await this.$axios.$post('mock/db', {

@@ -36,7 +36,7 @@ export default {
     },
     methods: {
         sendMsg() {
-            this.socketIO.send({ event: 'todo', rp: this.msg })
+            this.socketIO.send({ event: 'timeBlock', obj: { "id": 4, "touserId": [6] } })
         },
         initWebSocket() {
             this.socketIO = new WebSocket();

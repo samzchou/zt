@@ -12,8 +12,11 @@
                     <el-option v-for="o in formItem.options" :key="o.value" :label="o.label" :value="o.value"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="占位单元(列数)">
-                <el-slider v-model="formItem.colspan" :min="1" :max="6" @change="submitForm" />
+            <el-form-item>
+                <div>
+                    <el-checkbox v-model="hasColspan" @change="setCol">占位单元(列数)</el-checkbox>
+                </div>
+                <el-slider v-if="hasColspan" v-model="formItem.colspan" :min="1" :max="6" @change="submitForm" />
             </el-form-item>
             <!--
             <el-form-item label="数据接口URL">
@@ -53,10 +56,19 @@ export default {
         }
     },
     data: () => ({
-        formItem: {}
+        formItem: {},
+        hasColspan: false
     }),
     methods: {
         ...mapMutations('forms', ['UPDATE_ITEM', 'UPDATE_FORMS', 'UPDATE_RULES']),
+        setCol(val) {
+            if (val) {
+                this.formItem.colspan = this.currForms.colspan || 1;
+            } else {
+                delete this.formItem.colspan;
+            }
+            this.submitForm();
+        },
         setItemData() {
             if (this.currComponent) {
                 this.formItem = _.cloneDeep(this.currComponent);

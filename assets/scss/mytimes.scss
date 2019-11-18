@@ -34,7 +34,7 @@ $li-height: 20;
                 margin: 0 15px;
 
                 /deep/ .el-date-editor {
-                    width: 150px;
+                    width: 170px;
                 }
             }
         }
@@ -107,25 +107,46 @@ $li-height: 20;
                             >div {
                                 display: flex;
                                 align-items: center;
+                                position: relative;
 
                                 /deep/ .el-link {
                                     font-size: 12px;
                                     margin-right: 5px;
+                                }
+
+                                .dot {
+                                    position: absolute;
+                                    top: -10px;
+                                    right: -15px;
+                                    font-weight: normal;
+                                    width: 15px;
+                                    height: 15px;
+                                    background-color: #ffc14f;
+                                    border-radius: 50%;
+                                    color: #FFF;
+                                    padding: 2px;
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    transform: scale(0.8);
                                 }
                             }
 
                             .total-times {
                                 font-size: 12px;
                                 color: #bfbfbf;
-								>span{
-									margin-left:5px;
-									.state-3{
-										color:orange;
-									}
-									.state-4{
-										color:$c-main;
-									}
-								}
+
+                                >span {
+                                    margin-left: 5px;
+
+                                    .state-3 {
+                                        color: orange;
+                                    }
+
+                                    .state-4 {
+                                        color: $c-main;
+                                    }
+                                }
                             }
 
                             &.active {

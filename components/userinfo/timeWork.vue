@@ -17,7 +17,6 @@
             <el-form-item class="half" label="结束时间" prop="endTime">
                 <el-time-select placeholder="结束时间" v-model="ruleForm.endTime" :picker-options="{start: '00:00',step: '00:15', end: '24:00'}" style="width:100%" />
             </el-form-item>
-
             <el-form-item label="描述" prop="desc">
                 <el-input type="textarea" v-model="ruleForm.desc" placeholder="输入描述备注" />
             </el-form-item>

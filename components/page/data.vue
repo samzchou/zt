@@ -247,6 +247,28 @@ export default {
             this.query.page = page;
             this.searchSubmit();
         },
+        async getItemData(item){
+            let collData = [];
+            let conditon = {
+                type: 'listData',
+                collectionName: item.optionsUrl.table,
+                data: item.optionsUrl.params || {}
+            }
+            let res = await this.$axios.$post('mock/db', { data: conditon });
+            
+            if(item.component == 'sam-cascader'){
+                let lists =  res.list.map(obj => {
+                    return {
+                        id: item.id,
+                        pid: item.optionsUrl.pid?obj[item.optionsUrl.pid]:obj.pid,
+                        value: obj[item.optionsUrl.value],
+                        label: obj[item.optionsUrl.label]
+                    }
+                });
+                collData = this.$global.toTree(lists);
+            }
+            return collData;
+        },
         // 设置显示值
         getStr(row, field) {
             if (!this.tableData.length) {
@@ -260,7 +282,12 @@ export default {
                     let collData = collectionData[item.optionsUrl.table];
                     // 如果是级联
                     if (item.component == 'sam-cascader') {
-                        let nodeStr = dataUtil.getStrByArray(collData, [...str], '/', { 'label': item.optionsUrl.label });
+                        if(!collData){
+                            collData = this.getItemData(item);
+                        }
+						debugger
+						console.log('sam-cascader', str)
+                        let nodeStr = dataUtil.getStrByArray(collData, !_.isArray(str)?[str]:str, '/', { 'label': item.optionsUrl.label });
                         if (nodeStr) {
                             str = nodeStr;
                         }
@@ -272,11 +299,6 @@ export default {
                                 str = data ? data[key] : '';
                             } else if (_.isArray(str)) {
                                 let dd = [];
-                                /* for (let i = 0; i < str.length; i++) {
-                                    let data = _.find(collData, { "id": str[i] });
-                                    let key = item.optionsUrl.label;
-                                    dd.push(data[key]);
-                                } */
                                 str = dd.join(",");
                             }
                         }

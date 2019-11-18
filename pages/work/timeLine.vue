@@ -17,7 +17,7 @@
                 <div class="all-times">allTimes</div>
             </div>
             <div>
-                <el-button size="mini" icon="el-icon-time" type="primary" style="margin-right:20px;" @click="saveData">保存</el-button>
+                <el-button size="mini" icon="el-icon-time" type="primary" style="margin-right:20px;" @click="saveData(null)">保存</el-button>
                 <el-button-group>
                     <el-button size="mini" icon="el-icon-time" :type="viewType === 0 ? 'primary' : ''" title="时钟模式" @click="setType(1)" />
                     <el-button size="mini" icon="el-icon-date" :type="viewType == 1 ? 'primary' : ''" title="列表模式" @click="setType(0)" />
@@ -40,7 +40,10 @@
                     <ul class="week-list">
                         <li v-for="(week, idx) in weekList" :key="idx">
                             <div class="day" :class="{ active: checkAtive(idx) }">
-                                <div>{{ week.wday }} {{ getToday(week.date) }}</div>
+                                <div>
+                                    <span>{{ week.wday }} {{ getToday(week.date) }}</span>
+                                    <em class="dot">{{getHoliday(week)}}</em>
+                                </div>
                                 <div class="total-times">
                                     <!--判断是否已经申请补填-->
                                     <el-link v-if="checkApply(idx)" type="danger" @click="applyTime(idx)">申请补填</el-link>
@@ -57,11 +60,9 @@
                     <el-scrollbar ref="myScrollbar" class="scrollbar">
                         <ul id="week-list" class="week-list">
                             <li v-for="n in 7" :key="n" :class="{ active: checkAtive(n - 1) }">
-                                <time-col :col-index="n - 1" :ref="`cols-${n - 1}`" :time="weekList[n - 1]" :data-list="timeBlockList[n - 1]? timeBlockList[n - 1]['list']: []" @addBlock="addBlock" @updateList="updateList" />
+                                <time-col :col-index="n - 1" :ref="`cols-${n - 1}`" :time="weekList[n - 1]" :data-list="timeBlockList[n - 1]? timeBlockList[n - 1]['list']: []" @addBlock="addBlock" @removeBlock="removeBlock" @updateList="updateList" />
                                 <!--如果今天之前就冻结，加上遮罩，除非申请了补填并审核同意-->
-                                <div v-if="disabledWork(n - 1)" class="mask">
-                                    {{weekList[n - 1]['date']}}
-                                </div>
+                                <div v-if="disabledWork(n - 1)" class="mask"></div>
                             </li>
                         </ul>
                         <div class="data-window" :class="{ show: showWindow }" :style="setWindowPos">
@@ -76,6 +77,7 @@
                 </div>
             </div>
         </div>
+        <!--申请补填弹窗-->
         <el-dialog class="apply-dialog" title="申请补填" :visible.sync="showApply" append-to-body :close-on-click-modal="false" width="500px">
             <div class="apply-title">
                 申请日期：{{ formatDate(ruleForm.date) }}
@@ -110,6 +112,7 @@ export default {
         timeWork
     },
     data: () => ({
+        isSaved: false, // 数据是否已保存
         isInit: false,
         loading: true,
         weekList: [],
@@ -141,15 +144,7 @@ export default {
         socketIO: null,
     }),
     computed: {
-        ...mapState("timeWork", [
-            "weekArray",
-            "timeutilHeight",
-            "locakMinutes",
-            "editIndex",
-            "editBlock",
-            "isEditTime",
-            "rangeTime"
-        ]),
+        ...mapState("timeWork", ["holiday", "weekArray", "timeutilHeight", "locakMinutes", "editIndex", "editBlock", "isEditTime", "rangeTime"]),
         setWindowPos() {
             return {
                 left: this.windowPostion.left + "px",
@@ -157,11 +152,7 @@ export default {
             };
         },
         setWeekTitle() {
-            return (
-                moment(this.weekList[0].date).format("YYYY-MM-DD") +
-                "至" +
-                moment(this.weekList[6].date).format("YYYY-MM-DD")
-            );
+            return (moment(this.weekList[0].date).format("YYYY-MM-DD") + "至" + moment(this.weekList[6].date).format("YYYY-MM-DD"));
         }
     },
     watch: {
@@ -187,7 +178,21 @@ export default {
     },
     methods: {
         ...mapMutations("timeWork", ["UPDATE_EDITINGTIME"]),
-        ...mapActions("timeWork", ["ASYNC_GTETIME_RANGE"]),
+        ...mapActions("timeWork", ["ASYNC_GTETIME_RANGE", "ASYNC_GTE_HOLIDAY"]),
+        getHoliday(week) {
+            if (!this.holiday.length) return "";
+            let year = new Date(week.date).getFullYear();
+            let month = new Date(week.date).getMonth();
+            let day = new Date(week.date).getDate();
+            day = day < 10 ? '0' + day : String(day);
+            let hh = _.find(this.holiday, { 'year': String(year) });
+            let type = hh.lists[month][day];
+            if (type) {
+                let tt = _.find(this.$store.state.holidayType, { "value": String(type) });
+                return tt.label.substring(0, 1);
+            }
+            return '工';
+        },
         formatDate(date) {
             return moment(date).format("YYYY-MM-DD");
         },
@@ -209,12 +214,12 @@ export default {
                         }
                     }
                     this.ruleForm.state = 1; // 待处理
+                    this.ruleForm.isover = false; // 未完成补填
                     timeData.apply.push({ ...this.ruleForm });
                     this.saveData(timeData);
                     this.showApply = false;
                 }
             });
-
         },
         // 请求补填
         applyTime(i) {
@@ -231,14 +236,18 @@ export default {
             if (this.weekList[i].date >= this.rangeTime.startTime) {
                 return "";
             }
-            let apply = _.find(this.timeData.apply, { 'date': this.weekList[i].date });
-            if (apply) {
-                if (apply.agree) {
-                    return "补填";
+
+            if (this.timeData) {
+                let apply = _.find(this.timeData.apply, { 'date': this.weekList[i].date });
+                if (apply) {
+                    if (apply.agree) {
+                        return "补填";
+                    }
+                    let stateType = _.find(this.$store.state.stateType, { 'value': apply.state });
+                    return `<em class="state-${apply.state}}">${stateType.label}</em>`;
                 }
-                let stateType = _.find(this.$store.state.stateType, { 'value': apply.state });
-                return `<em class="state-${apply.state}}">补填${stateType.label}</em>`;
             }
+            return "";
         },
         checkApply(i) {
             let flag = false;
@@ -258,7 +267,6 @@ export default {
         },
         // 过时后检查是否可以补填
         disabledWork(i) {
-            // console.log('disabledWork', this.timeData);
             const md = new Date(this.rangeTime.startTime).setDate(1);
             if (this.weekList[i].date < md) {
                 return true;
@@ -269,7 +277,8 @@ export default {
             // 匹配数据是否主管批复了补填请求,如果存在则不加遮罩
             const index = _.findIndex(this.timeData.apply, {
                 date: this.weekList[i].date,
-                agree: true
+                agree: true,
+                isover: false
             });
             if (~index) {
                 return false;
@@ -300,7 +309,7 @@ export default {
         // 将毫秒数转换成小时分
         changeHourMinutestr(milliseconds) {
             milliseconds = !milliseconds ? 0 : milliseconds;
-            return this.$global.ChangeHourMinutestr(milliseconds);
+            return this.$global.exChange(milliseconds, ':');
         },
         showStatistical() {
             this.$storage.session.set("weekList", this.weekList);
@@ -313,30 +322,33 @@ export default {
                     list: []
                 };
             }
+            this.isSaved = false;
             this.timeBlockList[colIndex].list.push(blockObj);
+        },
+        removeBlock(colIndex, rowIndex) {
+            if (this.timeBlockList[colIndex]) {
+                this.isSaved = false;
+                this.timeBlockList[colIndex].list.splice(rowIndex, 1);
+            }
         },
         // 编辑时间块信息
         editBlockInfo() {
             this.showWindow = true;
             const colIndex = this.editBlock.colIndex;
-            const colLi = document.getElementById("week-list").childNodes[
-                colIndex
-            ];
+            const colLi = document.getElementById("week-list").childNodes[colIndex];
             if (colLi) {
                 this.windowPostion.left = colLi.offsetLeft + colLi.offsetWidth;
-                this.windowPostion.top =
-                    this.editBlock.rowIndex * this.timeutilHeight;
-                const containerWidth = document.getElementById("table-lists")
-                    .offsetWidth;
+                this.windowPostion.top = this.editBlock.rowIndex * this.timeutilHeight;
+                const containerWidth = document.getElementById("table-lists").offsetWidth;
                 if (this.windowPostion.left + 350 > containerWidth) {
                     this.windowPostion.left = colLi.offsetLeft - 350;
                 }
                 this.calcAllTimes();
             }
         },
-        // 取消关闭
+        // 取消关闭个人时钟管理数据录入小窗口
         closeEdit() {
-            console.log("this.editBlock");
+            //console.log("this.editBlock");
             this.UPDATE_EDITINGTIME(false);
             this.showWindow = false;
         },
@@ -362,7 +374,7 @@ export default {
             return dataArr;
         },
         // 保存数据(如果有之前申请补填的数据传过来则合并)
-        saveData(obj = {}) {
+        saveData(timeObj = {}) {
             const dataArr = this.getAlltimeBlockList();
             let data = {
                 userId: this.$store.state.user.id,
@@ -378,24 +390,39 @@ export default {
                 condition.type = "updateData";
                 data.id = this.timeData.id;
             }
-            data = Object.assign({}, data, obj);
+            data = Object.assign({}, data, { ...timeObj });
+
+            // 处理申请补填的数据，如果已做了补填则置为已经完成
+            if (this.timeData.apply) {
+                data.content.forEach(item => {
+                    let index = _.findIndex(this.timeData.apply, { "date": item.date });
+                    if (!!~index && item.list.length) {
+                        let apply = { ...this.timeData.apply[index] };
+                        apply.isover = true;
+                        this.$set(this.timeData.apply, index, apply);
+                    }
+                })
+                data.apply = this.timeData.apply;
+            }
             condition.data = data;
-            // console.log('data', data)
+            /* console.log('saveData', this.timeData, data)
+            return; */
             this.$axios.$post("mock/db", { data: condition }).then(result => {
                 console.log("result", result);
-                //debugger
                 if (!this.timeData) {
                     this.timeData = result;
                 }
+                this.isSaved = true;
                 this.$message.success("保存成功！");
                 this.showWindow = false;
 
                 // 如果提请了补填
-                if (!_.isEmpty(obj)) {
-                    this.submitInbox(obj, this.timeData.id);
+                if (!_.isEmpty(timeObj)) {
+                    this.submitInbox(timeObj, this.timeData.id);
                 }
             });
         },
+        // 发送消息
         async submitInbox(obj, wtid) {
             const condition = {
                 type: "addData",
@@ -404,18 +431,19 @@ export default {
                     fid: wtid,
                     wfType: 1,
                     fromuserId: this.$store.state.user.id,
+                    fromName: this.$store.state.user.e_name,
                     touserId: this.ruleForm.touserId,
-                    content: "时间钟补填申请,日期：" + moment(obj.date).format("YYYY-MM-DD")
+                    content: { "date": this.ruleForm.date }//"时间钟补填申请,日期：" + moment(obj.date).format("YYYY-MM-DD")
                 }
             };
             let res = await this.$axios.$post("mock/db", { data: condition });
-
-            console.log("submitInbox", res);
+            if (res) {
+                this.socketIO.send({ "event": 'timeBlock', "obj": { "id": res.id, "touserId": this.ruleForm.touserId } });
+            }
         },
         getToday(date) {
             return moment(date).format("MM-DD");
         },
-
         setType(val) {
             this.viewType = val;
         },
@@ -424,6 +452,7 @@ export default {
             this.weekToDay = date.getTime();
             this.setWeekList();
         },
+        // 滚动条事件
         handleScroll() {
             this.$nextTick(() => {
                 if (!this.isInit) {
@@ -439,10 +468,8 @@ export default {
                         this.loading = false;
                     }, 1000);
                 }
-
                 const scrollbarEl = this.$refs.myScrollbar.wrap;
                 const timesList = document.getElementById("times-list");
-
                 scrollbarEl.onscroll = () => {
                     timesList.scrollTop = scrollbarEl.scrollTop;
                 };
@@ -470,7 +497,6 @@ export default {
                 };
                 this.weekList.push(obj);
             });
-            console.log("setWeekList", this.weekList);
             // 获取数据
             this.getList();
         },
@@ -480,24 +506,22 @@ export default {
             const condition = {
                 type: "getData",
                 collectionName: "timeBlock",
+                notNotice: true,
                 data: {
                     startdate: this.weekList[0].date,
                     userId: this.$store.state.user.id
-                },
-                nothold: true
+                }
             };
-            const result = await this.$axios.$post(
-                "mock/db",
-                { data: condition },
-                { nothold: true }
-            );
+            const result = await this.$axios.$post("mock/db", { data: condition }, { nothold: true });
             if (result) {
                 this.timeData = result;
                 this.timeBlockList = result.content;
                 this.calcAllTimes(this.timeBlockList);
             }
+            this.isSaved = true;
             this.handleScroll();
         },
+        // 获取我的上级主管
         async getMyLeader() {
             let result = await this.$axios.$post('mock/db', {
                 data: {
@@ -514,18 +538,50 @@ export default {
                 this.myleader = result.list;
             }
         },
+        // 接收到消息后更新数据
+        resetApply(blockItem) {
+            let applyIndex = _.findIndex(this.timeData.apply, { 'date': blockItem.date });
+            this.$set(this.timeData.apply, applyIndex, blockItem);
+        },
+        // 初始化socket
+        initWebSocket() {
+            this.socketIO = new WebSocket();
+            this.socketIO.onmessage(data => {
+                if (data.obj.touserId.includes(this.$store.state.user.id) && data.event == 'applyFeedBack') {
+                    console.log('%c%s', 'color:green;', 'timeLine客户端接收到消息=>：' + JSON.stringify(data));
+                    this.resetApply(data.obj.blockItem);
+                }
+            })
+        },
     },
     beforeMount() {
         // 获取服务器的时间
         this.ASYNC_GTETIME_RANGE();
+        // 获取休假日数据
+        this.ASYNC_GTE_HOLIDAY();
     },
     mounted() {
         this.myleader = this.getMyLeader();
-        this.socketIO = new WebSocket();
+        this.initWebSocket();
     },
     beforeDestroy() {
         this.socketIO = null;
-    }
+    },
+    // 导航离开该组件的对应路由时调用
+    beforeRouteLeave(to, from, next) {
+        if (this.isSaved) {
+            next();
+        } else {
+            this.$confirm('当前数据未做保存，确定离开?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                next();
+            }).catch(() => { });
+        }
+    },
+
 };
 </script>
 

@@ -13,15 +13,15 @@
         <!--工作时间块-->
         <div class="time-block" v-for="(block,idx) in blockList" :key="idx" :class="{'active':activeIndex==idx}" v-clickoutside="handleClickOutside" @click="editMyBlock(idx)" :style="{'top':block.rect.top+'px','height':block.rect.height+'px'}">
             <div class="title">
-                <span>上班</span>
+                <span>工作</span>
                 <span class="all-times">{{setAllTime(block.allTimes)}}</span>
-                <i class="el-icon-close" @click="remove(idx)" />
+                <i class="el-icon-close" @click.stop.prevent="remove(idx)" />
             </div>
             <div class="desc">
                 <div>工作分类：{{getWorkStr('workType', block.type)}}</div>
                 <div>项目：{{getWorkStr('workProject', block.project)}}</div>
                 <div>备注描述：<br />{{ block.desc}}</div>
-                <div>完成情况：已完成</div>
+                <div>完成情况：待完成</div>
             </div>
             <div class="resize" @mousedown="handlerMouserDown(idx, $event)" />
         </div>
@@ -42,7 +42,7 @@ export default {
         dataList: Array
     },
     computed: {
-        ...mapState('timeWork', ['workType', 'workProject', 'timeutilHeight', 'locakMinutes', 'editIndex', 'editBlock', 'rangeTime']),
+        ...mapState('timeWork', ['holiday', 'workType', 'workProject', 'timeutilHeight', 'locakMinutes', 'editIndex', 'editBlock', 'rangeTime', 'isEditTime']),
     },
     watch: {
         editBlock: {
@@ -72,6 +72,12 @@ export default {
                 }
             },
             immediate: true
+        },
+        // 监听编辑小窗是否关闭， 如果关闭了且没有基础数据就同时删除时间块
+        isEditTime(flag) {
+            /* if (!flag && !this.currBlock.type && !this.currBlock.project) {
+                this.removeBlock(this.currBlock.index, true)
+            } */
         }
     },
     data: () => ({
@@ -94,14 +100,20 @@ export default {
             }
             return "";
         },
+        removeBlock(index) {
+            console.log('removeBlock', this.blockList);
+            //debugger
+            this.$emit('removeBlock', this.colIndex, index);
+            //this.blockList.splice(index, 1);
+            this.UPDATE_EDITBLOCK(null);
+        },
         remove(index) {
             this.$confirm('确定移除该工作时间?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.blockList.splice(index, 1);
-                this.UPDATE_EDITBLOCK(null);
+                this.removeBlock(index);
             }).catch(() => { });
         },
         updatePosition(obj) {
@@ -131,28 +143,32 @@ export default {
             this.UPDATE_EDITINDEX(this.colIndex + '-' + this.activeIndex);
             this.UPDATE_EDITBLOCK(_.cloneDeep(this.currBlock));
         },
-        // 创建一个新的时间钟块
+        // 创建一个新的时间钟块(以30分钟为基本时间)
         createBlock(index, evt) {
             this.activeIndex = this.blockList.length; //this.blockList.length ? this.blockList.length - 1 : 0;
             let target = evt.target.parentElement.parentElement; // 单元格目标
+            let startTime = this.locakMinutes * index * 60 * 1000, endTime = this.locakMinutes * (index + 2) * 60 * 1000;
             let obj = {
-                index: this.activeIndex,
-                colIndex: this.colIndex,
-                rowIndex: index,
-                rect: {
-                    top: index * this.timeutilHeight,
-                    height: this.timeutilHeight
+                "index": this.activeIndex,
+                "colIndex": this.colIndex,
+                "rowIndex": index,
+                "rect": {
+                    "top": index * this.timeutilHeight,
+                    "height": this.timeutilHeight * 2
                 },
-                startTime: this.locakMinutes * index * 60 * 1000,
-                endTime: this.locakMinutes * (index + 1) * 60 * 1000,
-                allTimes: this.locakMinutes * 60 * 1000
+                "startTime": startTime,
+                "endTime": endTime,
+                "allTimes": endTime - startTime
             };
+            console.log('this.blockList', this.blockList)
+            //debugger
             this.blockList.push(obj);
             this.currBlock = obj;
 
-            // 上报事件
+            // 上报事件 timeline.vue
             this.$emit('addBlock', this.colIndex, obj);
 
+            // 更新store
             this.UPDATE_EDITINDEX(this.colIndex + '-' + this.activeIndex);
             this.UPDATE_EDITBLOCK(_.cloneDeep(this.currBlock));
         },
@@ -160,17 +176,16 @@ export default {
             if (minutes !== "0" && minutes !== "" && minutes !== null) {
                 return ((Math.floor(minutes / 60)).toString().length < 2 ? "0" + (Math.floor(minutes / 60)).toString() :
                     (Math.floor(minutes / 60)).toString()) + ":" + ((minutes % 60).toString().length < 2 ? "0" + (minutes % 60).toString() : (minutes % 60).toString());
-            }
-            else {
+            } else {
                 return "";
             }
         },
         // 时间块resize后重新设定时长
         resetTimes(hh) {
-            let minutes = (this.currBlock.rect.height / this.timeutilHeight) * this.locakMinutes;
-            this.currBlock.endTime = minutes * 60 * 1000; //this.changeHourMinutestr((hh + this.currBlock.rowIndex) * this.locakMinutes);
-            this.currBlock.allTimes = this.currBlock.endTime - this.currBlock.startTime;//this.changeHourMinutestr(minutes);
-            console.log('this.currBlock', this.currBlock);
+            let minutes = hh * this.locakMinutes; // 总的时间数(this.currBlock.rect.height / this.timeutilHeight)
+            this.currBlock.allTimes = minutes * 60 * 1000;
+            this.currBlock.endTime = this.currBlock.allTimes + this.currBlock.startTime; //minutes * 60 * 1000;this.changeHourMinutestr((hh + this.currBlock.rowIndex) * this.locakMinutes);
+            //console.log('this.currBlock', this.currBlock);
             this.UPDATE_EDITBLOCK(_.cloneDeep(this.currBlock));
         },
         handlerMouserDown(index, evt) {
@@ -212,6 +227,9 @@ export default {
             document.addEventListener('mousemove', handleMouseMove);
             document.addEventListener('mouseup', handleMouseUp);
         },
+    },
+    mounted() {
+
     }
 }
 </script>

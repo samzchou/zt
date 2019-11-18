@@ -20,7 +20,8 @@
                 <el-table-column prop="name" label="员工" width="70" fixed="left"></el-table-column>
                 <el-table-column prop="totalTime" class="line" width="70" label="工时合计" fixed="left" align="center">
                     <template slot-scope="scope">
-                        <span>{{$global.ChangeHourMinutestr(scope.row.totalTime)}}</span>
+                        <!-- <span>{{$global.ChangeHourMinutestr(scope.row.totalTime)}}</span> -->
+                        <span>{{$global.exChange(scope.row.totalTime,':')}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column v-for="(day,index) in daysData" :prop="String(index)" :key="index" width="50" align="center">
@@ -75,7 +76,7 @@ export default {
             let block = _.find(lists, { "date": dt })
             if (block && block.list.length) {
                 let times = this.$global.getAllTimes(block.list);
-                return this.$global.ChangeHourMinutestr(times);
+                return this.$global.exChange(times, ':');
             } else {
                 return "";
             }
@@ -191,13 +192,14 @@ export default {
                 }
                 return obj;
             });
-            console.log('tableData', this.tableData);
+            //console.log('tableData', this.tableData);
         },
         calTotalTime(list, key) {
             let obj = {
                 totalTime: 0,
                 lists: []
             }
+            //console.log('calTotalTime', list)
             list.forEach(item => {
                 obj.lists = _.concat(obj.lists, item.content);
                 item.content.forEach(ls => {

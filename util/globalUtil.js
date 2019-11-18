@@ -1,5 +1,28 @@
 /* eslint-disable */
 export default {
+	formatDate(date, format = 'yyyy-MM-dd') {
+		var o = {
+		  "M+": date.getMonth() + 1, //month
+		  "d+": date.getDate(), //day
+		  "H+": date.getHours(), //hour
+		  "m+": date.getMinutes(), //minute
+		  "s+": date.getSeconds(), //second
+		  "q+": Math.floor((date.getMonth() + 3) / 3), //quarter
+		  "s": date.getMilliseconds() //millisecond
+		}
+
+		if (/(y+)/.test(format)) {
+		  format = format.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+		}
+
+		for (var k in o) {
+		  if (new RegExp("(" + k + ")").test(format)) {
+			format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+		  }
+		}
+		return format;
+	},
+
     // 获取本周第一天日期
     calcData(date = newDate()) {
         let weekday = date.getDay() || 7; //获取星期几,getDay()返回值是 0（周日） 到 6（周六） 之间的一个整数。0||7为7，即weekday的值为1-7
@@ -9,20 +32,20 @@ export default {
     },
     // 毫秒转小时分
     ChangeHourMinutestr(mss) {
-        let days = parseInt(mss / (1000 * 60 * 60 * 24));
+        //let days = parseInt(mss / (1000 * 60 * 60 * 24));
         let hours = parseInt((mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         let minutes = parseInt((mss % (1000 * 60 * 60)) / (1000 * 60));
-        let seconds = (mss % (1000 * 60)) / 1000;
+        //let seconds = (mss % (1000 * 60)) / 1000;
         return (hours < 10 ? '0' + hours : hours) + ":" + (minutes < 10 ? '0' + minutes : minutes);
     },
     // 分钟转换为
     exChange(mss, ext) {
-        let hours = parseInt((mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        let minutes = parseInt((mss % (1000 * 60 * 60)) / (1000 * 60));
+        let hours = Math.floor(mss/1000/60/60); //parseInt((mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let minutes = parseInt((mss/1000/60)%60); //parseInt((mss % (1000 * 60 * 60)) / (1000 * 60))
         if (ext) {
-            return hours + ext + minutes;
+            return (hours < 10 ? '0' + hours : hours) + ext + (minutes < 10 ? '0' + minutes : minutes);
         }
-        return hours + "小时 " + minutes + "分钟";
+        return (hours < 10 ? '0' + hours : hours) + "小时 " + (minutes < 10 ? '0' + minutes : minutes) + "分钟";
     },
     // 小时分转毫秒
     changeMyTimeToMin(str) {
@@ -40,7 +63,7 @@ export default {
         list.forEach(item => {
             //let startMin = this.changeMyTimeToMin(item.startTime);
             //let endMin = this.changeMyTimeToMin(item.endTime);
-            allTimes += (item.endTime - item.startTime);
+            allTimes += item.allTimes;//(item.endTime - item.startTime);
         });
         return allTimes;
     },

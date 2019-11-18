@@ -46,7 +46,6 @@ export default {
     methods: {
         ...mapMutations('forms', ['UPDATE_ITEM', 'UPDATE_FORMS']),
         setCol(val) {
-            console.log('setCol', val);
             if (val) {
                 this.formItem.colspan = this.currForms.colspan || 1;
             } else {

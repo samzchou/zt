@@ -296,8 +296,11 @@ export default {
         // tree勾选状态发生改变后删除或新增, 如果是父级节点则不进入数据
         handleCheckChange(data, isChecked) {
             if (data.children) return;
+            let myItem = {...data};
             let nodes = this.$refs.tree.getCheckedNodes();
             let formData = _.cloneDeep(this.currForms);
+            console.log('handleCheckChange', { ...formData })
+            
             if (!isChecked) {
                 let dataIndex = _.findIndex(formData.itemList, { "table": data.table, "name": data.name });
                 formData.itemList.splice(dataIndex, 1);
@@ -308,14 +311,13 @@ export default {
                         "message": "必填项",
                         "trigger": (data.component == 'sam-input') ? 'blur' : 'change'
                     };
-                    switch (data.component) {
-                        case "sam-cascader":
-                            rule.type = 'array';
-                            break;
+                    if(data.component=="sam-cascader" || (data.component=="sam-select" && data.multiple)){
+                        rule.type = 'array';
                     }
-                    data.rules = [rule];
+                    
+                    myItem.rules = [rule];
                 }
-                formData.itemList.push(data);
+                formData.itemList.push(myItem);
             }
             this.UPDATE_FORMS({ ...formData });
         },

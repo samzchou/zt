@@ -5,6 +5,7 @@ const navMenu = require('../config/navMenu');
 
 export const state = () => ({
 	rangeTime:null,
+	holiday:[],
     weekArray: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
     workType: [{
         label: "工作分类一",
@@ -34,16 +35,13 @@ export const mutations = {
     },
     UPDATE_EDITBLOCK(state, obj) {
         state.editBlock = obj;
-        //console.log('state.editBlock', state.editBlock);
     },
     UPDATE_EDITINDEX(state, indexStr) {
         state.editIndex = indexStr;
         state.isEditTime = true;
-        //console.log('state.editIndex', state.editIndex);
     },
     UPDATE_EDITINGTIME(state, flag) {
         state.isEditTime = flag;
-        //console.log('state.editIndex', state.editIndex);
     },
     TOGGLE_SIDEBAR: state => {
         VueCookies.set('sidebarStatus', state.sidebar.opened ? 1 : 0);
@@ -52,6 +50,9 @@ export const mutations = {
     },
 	UPDATE_TIME_RANGE(state, timeObj) {
 		state.rangeTime = timeObj;
+	},
+	UPDATE_HOLIDAY(state, data) {
+		state.holiday = data;
 	}
 }
 
@@ -79,6 +80,20 @@ export const actions = {
 				data: {}
 			}
         });
-        commit('UPDATE_TIME_RANGE', res)
+        commit('UPDATE_TIME_RANGE', res);
+    },
+	async ASYNC_GTE_HOLIDAY({ commit }) {
+		const condition = {
+			type: 'openFile',
+			path: 'holiday.json'
+		}
+		
+        let res = await this.$axios.$post('mock/files', { data: condition });
+		//debugger
+		if (res) {
+			res = JSON.parse(res);
+			commit('UPDATE_HOLIDAY', res);
+		}
+        
     },
 }

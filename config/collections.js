@@ -73,33 +73,6 @@ module.exports = {
             "label": "内容"
         }
     },
-    /*----------收件箱-----------*/
-    inbox: {
-        "id": {
-            "type": Number,
-            "default": 0
-        },
-        "type": {
-            "type": Number,
-            "default": 0,
-            "label": "消息类型"
-        },
-        "title": {
-            "type": String,
-            "default": "",
-            "label": "标题名称"
-        },
-        "form": {
-            "type": Object,
-            "default": {},
-            "label": "来自"
-        },
-        "touid": {
-            "type": Number,
-            "default": 0,
-            "label": "接受人UID"
-        }
-    },
     /*----------表单配置数据-----------*/
     formList: {
         "id": {
@@ -169,6 +142,21 @@ module.exports = {
             "type": String,
             "default": "",
             "label": "部门名称"
+        },
+		"disabled": {
+            "label": "是否禁用",
+            "type": "Boolean",
+            "default": false
+        },
+		"leaderId": {
+            "label": "主管领导ID",
+            "type": Number,
+            "default": 0
+        },
+		"sort": {
+            "label": "排序",
+            "type": Number,
+            "default": 0
         }
     },
     /*----------系统用户表-----------*/
@@ -304,20 +292,15 @@ module.exports = {
             "type": String,
             "default": ""
         },
-        "e_superior_department": {
-            "label": "上级部门",
-            "type": Number,
-            "default": 0
-        },
         "e_department": {
             "label": "所属部门",
-            "type": Number,
-            "default": 0
+            "type": Array,
+            "default": []
         },
         "is_leader": {
             "label": "是否主管领导",
-            "type": "Boolean",
-            "default": false
+            "type": Number,
+            "default": 0
         },
         "e_position": {
             "label": "岗位",
@@ -379,6 +362,11 @@ module.exports = {
             "default": new Date().getTime(),
             "label": "最后更新时间"
         },
+		"disabled":{
+			"type": Number,
+            "default": 0,
+            "label": "是否禁用"
+		},
         "token": {
             "label": "登录token",
             "type": String,
@@ -460,13 +448,18 @@ module.exports = {
             "default": 0,
             "label": "用户ID"
         },
+		"fromName": {
+            "type": String,
+            "default": 0,
+            "label": "用户姓名"
+        },
         "touserId": {
             "type": Array,
             "default": [],
             "label": "用户ID"
         },
         "content": {
-            "type": String,
+            "type": Object,
             "default": "",
             "label": "具体内容"
         },
@@ -474,6 +467,11 @@ module.exports = {
             "type": Number,
             "default": new Date().getTime(),
             "label": "创建时间"
+        },
+		"updateDate": {
+            "type": Number,
+            "default": new Date().getTime(),
+            "label": "更新时间"
         }
     },
 

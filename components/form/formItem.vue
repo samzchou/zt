@@ -17,7 +17,7 @@
             <el-option v-for="o in ajaxOptions" :key="o.value" :label="o.label" :value="o.value" />
         </el-select>
         <!--级联-->
-        <el-cascader v-else-if="item.component==='sam-cascader'" :options="ajaxOptions" :props="defaultPtops" v-bind="$attrs" v-on="$listeners" :disabled="item.disabled" :placeholder="item.placeholder||''" clearable @change="setValue" />
+        <el-cascader v-else-if="item.component==='sam-cascader'" :options="ajaxOptions" :props="cascadereOPt" collapse-tags v-bind="$attrs" v-on="$listeners" :disabled="item.disabled" :placeholder="item.placeholder||''" clearable @change="setValue" />
         <!-- 开关 -->
         <el-switch v-else-if="item.component==='sam-switch'" v-bind="$attrs" v-on="$listeners" :disabled="item.disabled"/>
     </el-form-item>
@@ -125,6 +125,9 @@ export default {
             label: "label",
             children: "children"
         },
+		cascadereOPt:{
+			multiple: false
+		},
         listenerOn: [],
         myValue: ''
     }),
@@ -144,19 +147,21 @@ export default {
             if (this.item.options && this.item.options.length) {
                 this.ajaxOptions = _.clone(this.item.options);
             } else if (this.item.optionsUrl && !this.item.level) {
+
                 let conditon = {
                     type: 'listData',
                     collectionName: this.item.optionsUrl.table,
                     data: this.item.optionsUrl.params || {}
                 }
                 let res = await this.$axios.$post('mock/db', { data: conditon });
+
                 if (res && res.list.length) {
                     // 如果是级联的
                     if (this.item.component == 'sam-cascader') {
                         let lists = res.list.map(item => {
                             return {
                                 id: item.id,
-                                pid: item.pid,
+                                pid: this.item.optionsUrl.pid?item[this.item.optionsUrl.pid]:item.pid,
                                 value: item[this.item.optionsUrl.value],
                                 label: item[this.item.optionsUrl.label]
                             }
