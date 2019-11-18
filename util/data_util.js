@@ -1,3 +1,4 @@
+/* eslint-disable */
 export default {
     /**
      *
@@ -91,9 +92,9 @@ export default {
         //console.log('getTreeNode', arrList);
         return arrList.join(ext || "-");
     },
-	// 根据数组获取对应节点名称
-	getStrByArray(arr, value, ext='-', opts={'label':'label'}){
-		const getArr = (nodes, val) => {
+    // 根据数组获取对应节点名称
+    getStrByCascader(arr, value, ext = '-', opts = { 'label': 'label' }) {
+        const getArr = (nodes, val) => {
             let str = [];
             for (let i = 0; i < val.length; i++) {
                 let node = _.find(nodes, { "id": val[i] });
@@ -103,36 +104,51 @@ export default {
             }
             return str;
         }
-		let arrList = getArr(arr, value);
+        let arrList = getArr(arr, value);
         return arrList.join(ext || "-");
-	},
-	getSearchParams(item, value) {
-		let params;
-		if (_.isNumber(value)) {
-			params = Number(value);
-		} else if (_.isArray(value) && value.length) {
-            if(item.component == 'sam-date'){
+    },
+    // 根据数组获取对应节点名称
+    getStrByArray(arr, value, ext = '-', opts = { 'label': 'label' }) {
+        const getArr = (nodes, val) => {
+            let str = [];
+            for (let i = 0; i < val.length; i++) {
+                let node = _.find(nodes, { "id": val[i] });
+                if (node) {
+                    str.push(node[opts.label]);
+                }
+            }
+            return str;
+        }
+        let arrList = getArr(arr, value);
+        return arrList.join(ext || "-");
+    },
+    getSearchParams(item, value) {
+        let params;
+        if (_.isNumber(value)) {
+            params = Number(value);
+        } else if (_.isArray(value) && value.length) {
+            if (item.component == 'sam-date') {
                 params = {
                     $gte: value[0],
                     $lt: value[1] + 24 * 3600 * 1000 - 1
                 }
-            }else{
+            } else {
                 params = { $in: value };
             }
-		} else if(_.isString(value)){
-			params = { $regex: value };
-		}
-		return params;
-	},
-	checkValue(type, value) {
-		switch (type) {
-			case "Number":
-				return Number(value);
-			default:
-				return value;
-		}
-	},
-	
+        } else if (_.isString(value)) {
+            params = { $regex: value };
+        }
+        return params;
+    },
+    checkValue(type, value) {
+        switch (type) {
+            case "Number":
+                return Number(value);
+            default:
+                return value;
+        }
+    },
+
 
     go(link, isNew, isFlow) {
         // 调用此方法需要go.call(this, ...);

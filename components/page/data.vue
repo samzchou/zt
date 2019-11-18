@@ -283,10 +283,9 @@ export default {
                     // 如果是级联
                     if (item.component == 'sam-cascader') {
                         if(!collData){
-                            collData = this.getItemData(item);
+                            cader = this.getItemData(item);
                         }
-						debugger
-						console.log('sam-cascader', str)
+						
                         let nodeStr = dataUtil.getStrByArray(collData, !_.isArray(str)?[str]:str, '/', { 'label': item.optionsUrl.label });
                         if (nodeStr) {
                             str = nodeStr;
